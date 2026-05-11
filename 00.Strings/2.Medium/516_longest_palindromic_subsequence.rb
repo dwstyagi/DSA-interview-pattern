@@ -7,6 +7,15 @@
 # A subsequence is a sequence derived from another sequence by deleting some elements
 # without changing the order of the remaining elements.
 #
+# Examples:
+#   Input:  s = "bbbab"
+#   Output: 4
+#   Why:    "bbbb" is a palindromic subsequence of length 4 (skip the 'a').
+#
+#   Input:  s = "cbbd"
+#   Output: 2
+#   Why:    "bb" is the longest palindromic subsequence (length 2).
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -52,7 +61,7 @@ def longest_palindromic_subsequence_brute(s)
   n = s.length
   memo = {}
 
-  lcs = ->(i, j) {
+  lcs = lambda do |i, j|
     return 0 if i >= n || j >= n
     return memo[[i, j]] if memo.key?([i, j])
 
@@ -61,7 +70,7 @@ def longest_palindromic_subsequence_brute(s)
                    else
                      [lcs.call(i + 1, j), lcs.call(i, j + 1)].max
                    end
-  }
+  end
 
   lcs.call(0, 0)
 end
@@ -76,7 +85,7 @@ def longest_palindromic_subsequence(s)
 
   # Fill by increasing substring length
   (2..n).each do |len|
-    (0..n - len).each do |i|
+    (0..(n - len)).each do |i|
       j = i + len - 1
       if s[i] == s[j]
         # Matching ends: add 2 to the inner palindrome length

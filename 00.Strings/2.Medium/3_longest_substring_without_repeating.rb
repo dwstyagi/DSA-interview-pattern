@@ -5,6 +5,16 @@
 # Problem:
 # Given a string s, find the length of the longest substring without repeating characters.
 #
+# Examples:
+#   Input:  s = "abcabcbb"
+#   Output: 3
+#   Why:    "abc" is the longest substring with all unique chars (length 3).
+#           When we hit the second 'a', the window shrinks.
+#
+#   Input:  s = "pwwkew"
+#   Output: 3
+#   Why:    "wke" is the longest unique substring (length 3). "pw" then hits duplicate 'w'.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

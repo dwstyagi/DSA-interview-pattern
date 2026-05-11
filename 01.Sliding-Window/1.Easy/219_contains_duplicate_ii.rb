@@ -7,6 +7,15 @@
 # distinct indices i and j in the array such that nums[i] == nums[j] and
 # abs(i - j) <= k.
 #
+# Examples:
+#   Input:  nums = [1,2,3,1], k = 3
+#   Output: true
+#   Why:    nums[0]=1 and nums[3]=1, abs(0-3)=3 <= k=3 -> true.
+#
+#   Input:  nums = [1,2,3,1,2,3], k = 2
+#   Output: false
+#   Why:    Duplicate 1s are at indices 0 and 3 (diff=3 > k=2). All pairs exceed k.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

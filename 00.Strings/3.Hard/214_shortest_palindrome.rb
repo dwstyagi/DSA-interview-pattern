@@ -6,6 +6,17 @@
 # You are given a string s. You can convert s to a palindrome by adding characters
 # in front of it. Return the shortest palindrome you can find.
 #
+# Examples:
+#   Input:  s = "aacecaaa"
+#   Output: "aaacecaaa"
+#   Why:    The longest palindromic prefix is "aacecaa". Prepend the reverse of
+#           the remaining suffix "a" -> prepend "a" -> "aaacecaaa".
+#
+#   Input:  s = "abcd"
+#   Output: "dcbabcd"
+#   Why:    Longest palindromic prefix is just "a". Reverse of "bcd" is "dcb",
+#           prepend it -> "dcbabcd".
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

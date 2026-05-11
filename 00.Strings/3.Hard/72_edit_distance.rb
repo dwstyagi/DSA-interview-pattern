@@ -6,6 +6,15 @@
 # Given two strings word1 and word2, return the minimum number of operations
 # (insert, delete, replace) to convert word1 to word2.
 #
+# Examples:
+#   Input:  word1 = "horse", word2 = "ros"
+#   Output: 3
+#   Why:    horse->rorse (replace h->r), rorse->rose (delete r), rose->ros (delete e).
+#
+#   Input:  word1 = "intention", word2 = "execution"
+#   Output: 5
+#   Why:    intention->inention->enention->exention->exection->execution (5 ops).
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -44,9 +53,9 @@
 def min_distance_brute(word1, word2)
   memo = {}
 
-  recurse = ->(i, j) {
-    return j if i == 0 # insert j chars
-    return i if j == 0 # delete i chars
+  recurse = lambda { |i, j|
+    return j if i.zero? # insert j chars
+    return i if j.zero? # delete i chars
     return memo[[i, j]] if memo.key?([i, j])
 
     memo[[i, j]] = if word1[i - 1] == word2[j - 1]
@@ -76,15 +85,15 @@ def min_distance(word1, word2)
 
   (1..m).each do |i|
     (1..n).each do |j|
-      if word1[i - 1] == word2[j - 1]
-        dp[i][j] = dp[i - 1][j - 1] # characters match, no operation needed
-      else
-        dp[i][j] = 1 + [
-          dp[i - 1][j],     # delete char from word1
-          dp[i][j - 1],     # insert char into word1
-          dp[i - 1][j - 1]  # replace char
-        ].min
-      end
+      dp[i][j] = if word1[i - 1] == word2[j - 1]
+                   dp[i - 1][j - 1] # characters match, no operation needed
+                 else
+                   1 + [
+                     dp[i - 1][j],     # delete char from word1
+                     dp[i][j - 1],     # insert char into word1
+                     dp[i - 1][j - 1]  # replace char
+                   ].min
+                 end
     end
   end
 

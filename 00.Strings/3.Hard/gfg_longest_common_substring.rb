@@ -6,6 +6,16 @@
 # Given two strings s1 and s2, find the length of the longest substring
 # common to both strings. A substring must be contiguous (unlike subsequence).
 #
+# Examples:
+#   Input:  s1 = "abcde", s2 = "abfce"
+#   Output: 2
+#   Why:    "ab" appears in both strings contiguously (length 2). "ace" is a
+#           subsequence but not a substring.
+#
+#   Input:  s1 = "GeeksforGeeks", s2 = "GeeksQuiz"
+#   Output: 5
+#   Why:    "Geeks" is the longest contiguous block common to both strings.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

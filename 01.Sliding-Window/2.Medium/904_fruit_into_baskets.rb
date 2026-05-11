@@ -11,6 +11,15 @@
 # - starting from some index, you must pick exactly one fruit from every tree
 #   while moving to the right
 #
+# Examples:
+#   Input:  fruits = [1,2,1]
+#   Output: 3
+#   Why:    Pick all 3 trees [1,2,1] — only 2 distinct types, fits in 2 baskets.
+#
+#   Input:  fruits = [0,1,2,2]
+#   Output: 3
+#   Why:    Best window is [1,2,2] (types 1 and 2, length 3). [0,1,2,2] has 3 types -> invalid.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

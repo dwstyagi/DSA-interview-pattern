@@ -6,6 +6,16 @@
 # Given a binary array nums and an integer k, return the maximum number of
 # consecutive 1's in the array if you can flip at most k 0's.
 #
+# Examples:
+#   Input:  nums = [1,1,1,0,0,0,1,1,1,1,0], k = 2
+#   Output: 6
+#   Why:    Flip the two 0s at indices 9,10: window [1,1,1,1,0,0] -> flip -> 6 consecutive 1s.
+#           Actually best window is indices 5..10 after flipping 2 zeros -> length 6.
+#
+#   Input:  nums = [0,0,1,1,0,0,1,1,1,0,1,1,0,0,0,1,1,1,1], k = 3
+#   Output: 10
+#   Why:    Flip 3 zeros in the right window to get 10 consecutive 1s.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

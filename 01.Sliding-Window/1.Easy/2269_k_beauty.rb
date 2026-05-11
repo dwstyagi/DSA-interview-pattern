@@ -8,6 +8,15 @@
 # of length k that are divisors of num.
 # A substring that is 0 is not a valid divisor.
 #
+# Examples:
+#   Input:  num = 240, k = 2
+#   Output: 2
+#   Why:    Substrings of length 2: "24","40". 24 divides 240, 40 divides 240 -> count=2.
+#
+#   Input:  num = 430043, k = 2
+#   Output: 2
+#   Why:    Substrings: "43","30","00","04","43". 43 divides 430043 twice -> count=2.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

@@ -7,6 +7,15 @@
 # Algorithm: 1) Ignore leading whitespace. 2) Read optional +/- sign.
 # 3) Read digits until non-digit or end. 4) Clamp to [-2^31, 2^31 - 1].
 #
+# Examples:
+#   Input:  s = "   -042"
+#   Output: -42
+#   Why:    Skip spaces, read '-' sign, read digits "042" -> -42.
+#
+#   Input:  s = "1337c0d3"
+#   Output: 1337
+#   Why:    Read digits "1337", stop at 'c' (non-digit) -> 1337.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

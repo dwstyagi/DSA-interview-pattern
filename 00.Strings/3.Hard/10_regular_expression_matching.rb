@@ -8,6 +8,15 @@
 # more of the preceding element).
 # The matching should cover the entire input string.
 #
+# Examples:
+#   Input:  s = "aa", p = "a*"
+#   Output: true
+#   Why:    "a*" means zero or more 'a's. Matching two 'a's -> true.
+#
+#   Input:  s = "mississippi", p = "mis*is*p*."
+#   Output: false
+#   Why:    The pattern can't fully cover "mississippi" — the trailing 'i' is unmatched.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

@@ -6,6 +6,15 @@
 # Given an integer array nums consisting of n elements and an integer k,
 # return the maximum average value of any contiguous subarray of length exactly k.
 #
+# Examples:
+#   Input:  nums = [1,12,-5,-6,50,3], k = 4
+#   Output: 12.75
+#   Why:    Subarray [12,-5,-6,50] has sum=51, avg=51/4=12.75 — the highest of all windows.
+#
+#   Input:  nums = [5], k = 1
+#   Output: 5.0
+#   Why:    Only one element, only one window of size 1 -> average is 5.0.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

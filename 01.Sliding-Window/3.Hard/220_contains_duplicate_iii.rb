@@ -8,6 +8,15 @@
 # - abs(i - j) <= indexDiff
 # - abs(nums[i] - nums[j]) <= valueDiff
 #
+# Examples:
+#   Input:  nums = [1,2,3,1], indexDiff = 3, valueDiff = 0
+#   Output: true
+#   Why:    nums[0]=1 and nums[3]=1: abs(0-3)=3<=3 and abs(1-1)=0<=0 -> true.
+#
+#   Input:  nums = [1,5,9,1,5,9], indexDiff = 2, valueDiff = 3
+#   Output: false
+#   Why:    No two indices within distance 2 have values within 3 of each other.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -112,31 +121,21 @@ def contains_nearby_almost_duplicate?(nums, index_diff, value_diff)
   buckets = {}
 
   nums.each_with_index do |num, right|
-    remove_expired_bucket(nums, buckets, right, index_diff, width)
-    bucket = bucket_id(num, width)
-    return true if nearby_bucket_match?(buckets, bucket, num, value_diff)
+    if right > index_diff
+      expired = nums[right - index_diff - 1]
+      buckets.delete(expired.div(width))
+    end
+
+    bucket = num.div(width)
+
+    return true if [bucket, bucket - 1, bucket + 1].any? { |key|
+      buckets.key?(key) && (num - buckets[key]).abs <= value_diff
+    }
 
     buckets[bucket] = num
   end
 
   false
-end
-
-def remove_expired_bucket(nums, buckets, right, index_diff, width)
-  return unless right > index_diff
-
-  expired = nums[right - index_diff - 1]
-  buckets.delete(bucket_id(expired, width))
-end
-
-def nearby_bucket_match?(buckets, bucket, num, value_diff)
-  [bucket, bucket - 1, bucket + 1].any? do |bucket_key|
-    buckets.key?(bucket_key) && (num - buckets[bucket_key]).abs <= value_diff
-  end
-end
-
-def bucket_id(num, width)
-  num.div(width)
 end
 
 if __FILE__ == $PROGRAM_NAME

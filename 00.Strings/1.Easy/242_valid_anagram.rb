@@ -6,6 +6,15 @@
 # Given two strings s and t, return true if t is an anagram of s, and false otherwise.
 # An anagram is a word formed by rearranging the letters of another.
 #
+# Examples:
+#   Input:  s = "anagram", t = "nagaram"
+#   Output: true
+#   Why:    Both contain exactly a×3, n×1, g×1, r×1, m×1 — same letters, same counts.
+#
+#   Input:  s = "rat", t = "car"
+#   Output: false
+#   Why:    "rat" has r,a,t but "car" has c,a,r — 'c' and 't' differ, not an anagram.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

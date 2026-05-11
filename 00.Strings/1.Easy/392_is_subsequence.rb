@@ -7,6 +7,15 @@
 # or false otherwise. A subsequence is formed by deleting some characters
 # (can be zero) from t without changing the relative order.
 #
+# Examples:
+#   Input:  s = "abc", t = "ahbgdc"
+#   Output: true
+#   Why:    a..b..c can be found in order in "ahbgdc" (skip h, g, d) -> true.
+#
+#   Input:  s = "axc", t = "ahbgdc"
+#   Output: false
+#   Why:    After matching 'a', we need 'x' next but only h,b,g,d,c remain — 'x' not found.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

@@ -10,6 +10,16 @@
 # Y   I   R
 # Return the string read left to right, line by line: "PAHNAPLSIIGYIR"
 #
+# Examples:
+#   Input:  s = "PAYPALISHIRING", numRows = 3
+#   Output: "PAHNAPLSIIGYIR"
+#   Why:    Row0:"PAHN", Row1:"APLSIIG", Row2:"YIR" -> concatenate -> "PAHNAPLSIIGYIR".
+#
+#   Input:  s = "AB", numRows = 1
+#   Output: "AB"
+#   Why:    With 1 row there's no zigzag, all chars stay in the same row.
+#
+
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

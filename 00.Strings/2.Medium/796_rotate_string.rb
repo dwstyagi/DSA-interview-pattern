@@ -7,6 +7,15 @@
 # after some number of shifts.
 # A shift moves the leftmost character to the rightmost position.
 #
+# Examples:
+#   Input:  s = "abcde", goal = "cdeab"
+#   Output: true
+#   Why:    Shift "abcde" twice: "bcdea" -> "cdeab" = goal. Also: "abcdeabcde" contains "cdeab".
+#
+#   Input:  s = "abcde", goal = "abced"
+#   Output: false
+#   Why:    No rotation of "abcde" produces "abced" — "abcdeabcde" doesn't contain it.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

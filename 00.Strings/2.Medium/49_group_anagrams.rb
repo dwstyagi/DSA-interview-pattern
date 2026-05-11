@@ -6,6 +6,15 @@
 # Given an array of strings strs, group the anagrams together.
 # You can return the answer in any order.
 #
+# Examples:
+#   Input:  strs = ["eat","tea","tan","ate","nat","bat"]
+#   Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
+#   Why:    "eat","tea","ate" all sort to "aet". "tan","nat" sort to "ant". "bat" is alone.
+#
+#   Input:  strs = ["a"]
+#   Output: [["a"]]
+#   Why:    Single element — forms its own group.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

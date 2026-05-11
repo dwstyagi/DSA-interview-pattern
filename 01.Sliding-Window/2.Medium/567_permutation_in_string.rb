@@ -6,6 +6,15 @@
 # Given two strings s1 and s2, return true if s2 contains a substring
 # that is a permutation of s1, or false otherwise.
 #
+# Examples:
+#   Input:  s1 = "ab", s2 = "eidbaooo"
+#   Output: true
+#   Why:    s2[3..4]="ba" is a permutation of "ab" -> true.
+#
+#   Input:  s1 = "ab", s2 = "eidboaoo"
+#   Output: false
+#   Why:    No window of length 2 in s2 contains exactly one 'a' and one 'b' together.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

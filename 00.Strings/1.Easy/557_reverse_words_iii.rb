@@ -6,6 +6,15 @@
 # Given a string s, reverse the order of characters in each word within a sentence
 # while still preserving whitespace and initial word order.
 #
+# Examples:
+#   Input:  s = "Let's take LeetCode contest"
+#   Output: "s'teL ekat edoCteeL tsetnoc"
+#   Why:    Each word is individually reversed; word order stays the same.
+#
+#   Input:  s = "God Ding"
+#   Output: "doG gniD"
+#   Why:    "God" -> "doG", "Ding" -> "gniD", spaces preserved between them.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

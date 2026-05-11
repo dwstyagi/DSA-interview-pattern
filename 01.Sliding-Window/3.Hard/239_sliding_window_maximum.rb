@@ -6,6 +6,15 @@
 # Given an integer array nums and an integer window_size, return an array of
 # the maximum value in every contiguous subarray of size window_size.
 #
+# Examples:
+#   Input:  nums = [1,3,-1,-3,5,3,6,7], k = 3
+#   Output: [3,3,5,5,6,7]
+#   Why:    Windows: [1,3,-1]->3, [3,-1,-3]->3, [-1,-3,5]->5, [-3,5,3]->5, [5,3,6]->6, [3,6,7]->7.
+#
+#   Input:  nums = [1], k = 1
+#   Output: [1]
+#   Why:    Single element, single window -> maximum is 1.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -89,21 +98,13 @@ def max_sliding_window(nums, window_size)
   result = []
 
   nums.each_with_index do |num, right|
-    dequeue_expired_indices(deque, right, window_size)
-    dequeue_smaller_values(deque, nums, num)
+    deque.shift if !deque.empty? && deque[0] <= right - window_size
+    deque.pop while !deque.empty? && nums[deque[-1]] <= num
     deque << right
     result << nums[deque[0]] if right >= window_size - 1
   end
 
   result
-end
-
-def dequeue_expired_indices(deque, right, window_size)
-  deque.shift if !deque.empty? && deque[0] <= right - window_size
-end
-
-def dequeue_smaller_values(deque, nums, current_num)
-  deque.pop while !deque.empty? && nums[deque[-1]] <= current_num
 end
 
 if __FILE__ == $PROGRAM_NAME

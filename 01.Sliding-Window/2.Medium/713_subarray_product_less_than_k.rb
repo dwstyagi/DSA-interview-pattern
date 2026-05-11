@@ -7,6 +7,15 @@
 # of contiguous subarrays where the product of all the elements is strictly
 # less than k.
 #
+# Examples:
+#   Input:  nums = [10,5,2,6], k = 100
+#   Output: 8
+#   Why:    Valid subarrays: [10],[5],[2],[6],[10,5],[5,2],[2,6],[5,2,6] -> 8 subarrays.
+#
+#   Input:  nums = [1,2,3], k = 0
+#   Output: 0
+#   Why:    k=0 means product must be < 0, impossible with positive nums -> 0.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -122,20 +131,16 @@ def num_subarray_product_less_than_k(nums, limit)
 
   nums.each_with_index do |num, right|
     product *= num
-    left, product = shrink_product_window(nums, left, product, limit) if product >= limit
+
+    while product >= limit
+      product /= nums[left]
+      left += 1
+    end
+
     count += right - left + 1
   end
 
   count
-end
-
-def shrink_product_window(nums, left, product, limit)
-  while product >= limit
-    product /= nums[left]
-    left += 1
-  end
-
-  [left, product]
 end
 
 if __FILE__ == $PROGRAM_NAME

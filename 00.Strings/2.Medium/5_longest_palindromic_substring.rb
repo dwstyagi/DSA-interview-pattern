@@ -5,6 +5,17 @@
 # Problem:
 # Given a string s, return the longest palindromic substring in s.
 #
+# Examples:
+#   Input:  s = "babad"
+#   Output: "bab"
+#   Why:    "bab" is a palindrome (reads same forwards and backwards).
+#           "aba" is also valid — both have length 3, either is accepted.
+#
+#   Input:  s = "cbbd"
+#   Output: "bb"
+#   Why:    Substrings: "c","b","b","d","cb","bb","bd","cbb","bbd","cbbd"
+#           Only "bb" is a palindrome with length > 1, so that's the answer.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -80,9 +91,49 @@ def expand_around_center(s, left, right)
   s[(left + 1)...right]
 end
 
+# dp solution: dp[i][j] = true if s[i..j] is a palindrome
+# base: single chars and adjacent equal pairs; fill diagonally by length
+# Time: O(n^2), Space: O(n^2)
+def longest_palindrome_dp(s)
+  n = s.length
+  dp = Array.new(n) { Array.new(n, false) }
+  best_start = 0
+  best_len = 1
+
+  # all single chars are palindromes
+  n.times { |i| dp[i][i] = true }
+
+  # check length-2 substrings
+  (0...n - 1).each do |i|
+    next unless s[i] == s[i + 1]
+
+    dp[i][i + 1] = true
+    best_start = i
+    best_len = 2
+  end
+
+  # check lengths 3..n
+  (3..n).each do |len|
+    (0..n - len).each do |i|
+      j = i + len - 1
+      next unless s[i] == s[j] && dp[i + 1][j - 1]
+
+      dp[i][j] = true
+      if len > best_len
+        best_start = i
+        best_len = len
+      end
+    end
+  end
+
+  s[best_start, best_len]
+end
+
 if __FILE__ == $PROGRAM_NAME
   puts "Brute force: #{longest_palindrome_brute('babad')}" # "bab" or "aba"
+  puts "DP:          #{longest_palindrome_dp('babad')}"    # "bab" or "aba"
   puts "Optimized:   #{longest_palindrome('babad')}"       # "bab" or "aba"
   puts "Brute force: #{longest_palindrome_brute('cbbd')}"  # "bb"
+  puts "DP:          #{longest_palindrome_dp('cbbd')}"     # "bb"
   puts "Optimized:   #{longest_palindrome('cbbd')}"        # "bb"
 end

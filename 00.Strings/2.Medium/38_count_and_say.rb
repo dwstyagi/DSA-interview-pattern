@@ -8,6 +8,15 @@
 # countAndSay(n) = run-length encoding of countAndSay(n-1)
 # Return the nth term.
 #
+# Examples:
+#   Input:  n = 4
+#   Output: "1211"
+#   Why:    n=1:"1", n=2:"11"(one 1), n=3:"21"(two 1s), n=4:"1211"(one 2, one 1).
+#
+#   Input:  n = 1
+#   Output: "1"
+#   Why:    Base case — the sequence starts with "1".
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

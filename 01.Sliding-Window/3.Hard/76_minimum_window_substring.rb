@@ -7,6 +7,16 @@
 # text such that every character in pattern, including duplicates, is covered
 # by the window. If no such window exists, return an empty string.
 #
+# Examples:
+#   Input:  s = "ADOBECODEBANC", t = "ABC"
+#   Output: "BANC"
+#   Why:    "BANC" (length 4) is the smallest window containing A, B, C.
+#           "ADOBEC" also works but is longer (6 chars).
+#
+#   Input:  s = "a", t = "b"
+#   Output: ""
+#   Why:    'b' never appears in s, so no valid window exists -> return "".
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -73,86 +83,62 @@
 # - if no valid window exists -> return ""
 
 def min_window_true_brute_force(text, pattern)
-  target_count = build_char_count(pattern)
   best = ''
+  target_count = Hash.new(0)
+  pattern.each_char { |char| target_count[char] += 1 }
+
   (0...text.length).each do |left|
-    best = find_best_from(text, target_count, left, best)
-  end
-  best
-end
+    window_count = Hash.new(0)
 
-def find_best_from(text, target_count, left, best)
-  window_count = Hash.new(0)
-  (left...text.length).each do |right|
-    window_count[text[right]] += 1
-    next unless valid_window?(window_count, target_count)
+    (left...text.length).each do |right|
+      window_count[text[right]] += 1
 
-    candidate = text[left..right]
-    best = candidate if best.empty? || candidate.length < best.length
+      valid = target_count.all? do |char, needed_frequency|
+        window_count[char] >= needed_frequency
+      end
+
+      next unless valid
+
+      candidate = text[left..right]
+      best = candidate if best.empty? || candidate.length < best.length
+    end
   end
+
   best
 end
 
 def min_window(text, pattern)
   return '' if pattern.length > text.length
 
-  need = build_char_count(pattern)
-  state = build_window_state
-  scan_text(text, need, state)
-  extract_result(text, state)
-end
+  need = Hash.new(0)
+  pattern.each_char { |char| need[char] += 1 }
 
-def build_window_state
-  { window: Hash.new(0), formed: 0, left: 0, best_start: 0, best_len: Float::INFINITY }
-end
+  window = Hash.new(0)
+  required = need.length
+  formed = 0
+  left = 0
+  best_start = 0
+  best_length = Float::INFINITY
 
-def scan_text(text, need, state)
   text.each_char.with_index do |char, right|
-    state[:formed] = expand_min_window(state[:window], need, char, state[:formed])
-    shrink_window(text, need, state, right) while state[:formed] == need.length
+    window[char] += 1
+    formed += 1 if need.key?(char) && window[char] == need[char]
+
+    while formed == required
+      window_length = right - left + 1
+      if window_length < best_length
+        best_start = left
+        best_length = window_length
+      end
+
+      left_char = text[left]
+      window[left_char] -= 1
+      formed -= 1 if need.key?(left_char) && window[left_char] < need[left_char]
+      left += 1
+    end
   end
-end
 
-def extract_result(text, state)
-  state[:best_len] == Float::INFINITY ? '' : text[state[:best_start], state[:best_len]]
-end
-
-def shrink_window(text, need, state, right)
-  state[:best_start], state[:best_len] = update_best_window(state[:left], right, state[:best_start], state[:best_len])
-  state[:formed] = shrink_min_window(text, state[:window], need, state[:left], state[:formed])
-  state[:left] += 1
-end
-
-def build_char_count(text)
-  count = Hash.new(0)
-  text.each_char { |char| count[char] += 1 }
-  count
-end
-
-def valid_window?(window_count, target_count)
-  target_count.all? do |char, needed_frequency|
-    window_count[char] >= needed_frequency
-  end
-end
-
-def expand_min_window(window, need, char, formed)
-  window[char] += 1
-  formed += 1 if need.key?(char) && window[char] == need[char]
-  formed
-end
-
-def shrink_min_window(text, window, need, left, formed)
-  left_char = text[left]
-  window[left_char] -= 1
-  formed -= 1 if need.key?(left_char) && window[left_char] < need[left_char]
-  formed
-end
-
-def update_best_window(left, right, best_start, best_length)
-  window_length = right - left + 1
-  return [best_start, best_length] if window_length >= best_length
-
-  [left, window_length]
+  best_length == Float::INFINITY ? '' : text[best_start, best_length]
 end
 
 if __FILE__ == $PROGRAM_NAME

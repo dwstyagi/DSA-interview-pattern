@@ -7,6 +7,15 @@
 # The input is given as an array of characters s.
 # You must do this by modifying the input array in-place with O(1) extra memory.
 #
+# Examples:
+#   Input:  s = ["h","e","l","l","o"]
+#   Output: ["o","l","l","e","h"]
+#   Why:    Swap first and last, then move inward: h↔o, e↔l, middle 'l' stays.
+#
+#   Input:  s = ["H","a","n","n","a","h"]
+#   Output: ["h","a","n","n","a","H"]
+#   Why:    Swap index 0↔5, 1↔4, 2↔3 in-place to reverse the array.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

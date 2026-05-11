@@ -8,6 +8,15 @@
 # Return a string of the words in reverse order concatenated by a single space.
 # Note: leading/trailing spaces and multiple spaces between words should be removed.
 #
+# Examples:
+#   Input:  s = "the sky is blue"
+#   Output: "blue is sky the"
+#   Why:    Split into ["the","sky","is","blue"], reverse order -> "blue is sky the".
+#
+#   Input:  s = "  hello world  "
+#   Output: "world hello"
+#   Why:    Strip leading/trailing spaces, split -> ["hello","world"], reverse -> "world hello".
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

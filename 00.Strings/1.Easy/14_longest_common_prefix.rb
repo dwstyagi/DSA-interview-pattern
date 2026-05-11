@@ -6,6 +6,15 @@
 # Write a function to find the longest common prefix string amongst an array of strings.
 # If there is no common prefix, return an empty string "".
 #
+# Examples:
+#   Input:  strs = ["flower","flow","flight"]
+#   Output: "fl"
+#   Why:    All three strings start with "fl". The third char differs (o vs i), so "fl" is the answer.
+#
+#   Input:  strs = ["dog","racecar","car"]
+#   Output: ""
+#   Why:    "dog" starts with 'd', others start with 'r' and 'c' — no common prefix at all.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

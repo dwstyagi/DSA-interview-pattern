@@ -3,75 +3,90 @@
 # LeetCode 438: Find All Anagrams in a String
 #
 # Problem:
-# Given two strings s and p, return an array of all starting indices of
-# p's anagrams in s. An anagram has the same characters with the same
-# frequency as the original. Order of output does not matter.
+# Given two strings text and pattern, return an array of all starting indices
+# of pattern's anagrams in text. An anagram uses the same characters with the
+# same frequencies, just in any order.
+#
+# Example:
+# text = "cbaebabacd"
+# pattern = "abc"
+# answer = [0, 6]
 #
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
 # 1. True Brute Force
-#    Slide a window of size p.length across s.
-#    For each window, sort it and compare to sorted p.
-#    If match, record the starting index.
+#    Slide a window of size pattern.length across text.
+#    For each window, build its character count from scratch and compare it
+#    with the character count of pattern.
 #
-#    Time Complexity: O(n * k log k) — n windows, k = p.length, sort each
-#    Space Complexity: O(k)
+#    Time Complexity: O(n * k)
+#    Space Complexity: O(1)
+#
+#    Here:
+#    - n = text.length
+#    - k = pattern.length
 #
 # 2. Bottleneck
-#    Sorting every window from scratch is wasted work.
-#    When sliding by one step, only one character enters and one leaves.
-#    We can update counts incrementally instead of re-sorting.
+#    Consecutive windows overlap heavily, but brute force rebuilds the whole
+#    count from scratch every time.
+#    When the window moves by one step, only one character leaves and one
+#    character enters.
 #
 # 3. Optimized Accepted Approach
-#    Use two hash maps — one for p counts, one for the current window.
-#    Build p_count once. Initialize window_count for the first window.
-#    Slide the window: add incoming char, remove outgoing char.
-#    If window_count == p_count, record the starting index.
+#    Use a fixed-size sliding window of length pattern.length.
+#    Track:
+#    - pattern_count: frequency of characters in pattern
+#    - window_count: frequency of characters in the current window of text
+#
+#    Build the first window once, compare, then slide:
+#    - add the incoming character
+#    - remove the outgoing character
+#    - compare again
+#
+#    Since the problem uses lowercase English letters, arrays of size 26 are a
+#    clean frequency structure.
 #
 #    Time Complexity: O(n)
-#    Space Complexity: O(k) — at most 26 keys per hash
+#    Space Complexity: O(1)
 #
 # -----------------------------------------------------------------------------
 # Dry Run
 #
-# s = "cbaebadb", p = "abc"
-# k = 3, p_count = {a:1, b:1, c:1}
+# text = "cbaebabacd"
+# pattern = "abc"
 #
-# Initial window "cba": window_count = {c:1, b:1, a:1} == p_count -> result=[0]
+# pattern_count = counts of "abc"
 #
-# left=1, incoming=s[3]='e', outgoing=s[0]='c'
-# window_count = {b:1, a:1, e:1} != p_count
+# first window = "cba"
+# window_count matches pattern_count
+# result = [0]
 #
-# left=2, incoming=s[4]='b', outgoing=s[1]='b'
-# window_count = {a:1, e:1, b:1} != p_count
-#
-# left=3, incoming=s[5]='a', outgoing=s[2]='a'
-# window_count = {e:1, b:1, a:1} != p_count
-#
-# left=4, incoming=s[6]='d', outgoing=s[3]='e'
-# window_count = {b:1, a:1, d:1} != p_count
-#
-# left=5, incoming=s[7]='b', outgoing=s[4]='b'
-# window_count = {a:1, d:1, b:1} != p_count
-#
-# left=6, incoming=s[8] -> out of bounds... wait s="cbaebadb", length=8
-# so s[0,3]="cba", last left = 8-3 = 5
+# slide through:
+# "bae" -> not a match
+# "aeb" -> not a match
+# "eba" -> not a match
+# "bab" -> not a match
+# "aba" -> not a match
+# "bac" -> match
+# result = [0, 6]
 #
 # Final answer = [0, 6]
 #
 # Edge Cases:
-# - p.length > s.length -> return []
-# - s or p empty -> return []
-# - No anagram exists -> return []
+# - pattern longer than text -> return []
+# - no matching window -> return []
+# - repeated characters in pattern must match by frequency
 
-def find_anagrams_brute(text, pattern)
+def find_anagrams_true_brute_force(text, pattern)
+  return [] if pattern.length > text.length
+
   result = []
+  pattern_count = lowercase_count(pattern)
   window_size = pattern.length
-  pattern_sorted = pattern.chars.sort
 
   (0..(text.length - window_size)).each do |left|
-    result << left if text[left, window_size].chars.sort == pattern_sorted
+    result << left if lowercase_count(text[left, window_size]) == pattern_count
   end
 
   result
@@ -81,40 +96,35 @@ def find_anagrams(text, pattern)
   window_size = pattern.length
   return [] if window_size.zero? || window_size > text.length
 
-  pattern_count, window_count = initial_window_counts(text, pattern, window_size)
-  scan_anagram_windows(text, window_size, pattern_count, window_count)
-end
-
-def build_char_count(text)
-  counts = Hash.new(0)
-  text.each_char { |char| counts[char] += 1 }
-  counts
-end
-
-def initial_window_counts(text, pattern, window_size)
-  [build_char_count(pattern), build_char_count(text[0, window_size])]
-end
-
-def scan_anagram_windows(text, window_size, pattern_count, window_count)
   result = []
+  pattern_count = lowercase_count(pattern)
+  window_count = lowercase_count(text[0, window_size])
+
   result << 0 if window_count == pattern_count
-  (1..(text.length - window_size)).each do |left|
-    update_window_count(window_count, text[left + window_size - 1], text[left - 1])
-    result << left if window_count == pattern_count
+
+  (window_size...text.length).each do |right|
+    window_count[lowercase_index(text[right])] += 1
+    window_count[lowercase_index(text[right - window_size])] -= 1
+    result << right - window_size + 1 if window_count == pattern_count
   end
+
   result
 end
 
-def update_window_count(window_count, incoming_char, outgoing_char)
-  window_count[incoming_char] += 1
-  window_count[outgoing_char] -= 1
-  window_count.delete(outgoing_char) if window_count[outgoing_char].zero?
+def lowercase_count(text)
+  count = Array.new(26, 0)
+  text.each_char { |char| count[lowercase_index(char)] += 1 }
+  count
+end
+
+def lowercase_index(char)
+  char.ord - 'a'.ord
 end
 
 if __FILE__ == $PROGRAM_NAME
-  s = 'cbaebadb'
-  p = 'abc'
+  text = 'cbaebabacd'
+  pattern = 'abc'
 
-  puts "Brute force: #{find_anagrams_brute(s, p)}"
-  puts "Optimized:   #{find_anagrams(s, p)}"
+  puts "True brute force: #{find_anagrams_true_brute_force(text, pattern)}"
+  puts "Optimized:        #{find_anagrams(text, pattern)}"
 end

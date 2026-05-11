@@ -3,63 +3,82 @@
 # LeetCode 3: Longest Substring Without Repeating Characters
 #
 # Problem:
-# Given a string s, find the length of the longest substring that contains
-# no repeating characters.
+# Given a string text, return the length of the longest substring without
+# repeating characters.
+#
+# Examples:
+#   Input:  s = "abcabcbb"
+#   Output: 3
+#   Why:    "abc" is the longest window with all unique chars; when 'a' repeats, window shrinks.
+#
+#   Input:  s = "pwwkew"
+#   Output: 3
+#   Why:    "wke" is the longest unique substring (length 3). "pw" hits duplicate 'w' at index 2.
 #
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
 # 1. True Brute Force
-#    Check every possible substring (left, right).
-#    For each, verify all characters are unique using uniq.
-#    Track the maximum length seen.
+#    Generate every substring.
+#    For each substring, check whether all characters are unique.
+#    If valid, update the best length.
 #
-#    Time Complexity: O(n^3)
+#    Time Complexity: O(n^3) in the straightforward version
 #    Space Complexity: O(n)
 #
 #    Why O(n^3)?
 #    - O(n^2) substrings
-#    - O(n) to check uniqueness per substring
+#    - O(n) work to check uniqueness for each substring
 #
 # 2. Bottleneck
-#    We recheck characters from scratch for every substring.
-#    When we hit a duplicate at right, we don't need to restart from left + 1.
-#    We only need to shrink the window until the duplicate is gone.
+#    Consecutive substrings overlap heavily, but brute force rebuilds the
+#    uniqueness check from scratch every time.
+#    We only need the longest valid window where every character appears once.
 #
 # 3. Optimized Accepted Approach
-#    Use a sliding window with a hash tracking character counts.
-#    Expand right one step at a time.
-#    When s[right] has count > 1, shrink from left until count drops back to 1.
-#    Track the max window size throughout.
+#    Use a variable-size sliding window with a frequency hash.
+#    Expand right one character at a time.
+#    If a character count becomes greater than 1, shrink from the left until
+#    the window is valid again.
+#
+#    Window invariant:
+#    - every character count in the window is at most 1
 #
 #    Time Complexity: O(n)
-#    Space Complexity: O(n)
+#    Space Complexity: O(k)
+#    Here k is the number of distinct characters in the current window.
 #
 # -----------------------------------------------------------------------------
 # Dry Run
 #
-# s = "abcab"
+# text = "abcabcbb"
 #
-# j=0, hash={a:1}, i=0, result=1
-# j=1, hash={a:1,b:1}, i=0, result=2
-# j=2, hash={a:1,b:1,c:1}, i=0, result=3
-# j=3, hash={a:2,b:1,c:1} -> shrink: hash={b:1,c:1,a:1}, i=1, result=3
-# j=4, hash={b:2,c:1,a:1} -> shrink: hash={c:1,a:1,b:1}, i=2, result=3
+# right = 0 -> window "a", valid, best = 1
+# right = 1 -> window "ab", valid, best = 2
+# right = 2 -> window "abc", valid, best = 3
+# right = 3 -> window "abca", 'a' repeats
+# shrink from the left until window becomes "bca"
+# best stays 3
+#
+# continue scanning
+# no later window beats length 3
 #
 # Final answer = 3
 #
 # Edge Cases:
-# - Empty string -> return 0
-# - All unique characters -> return s.length
-# - All same characters -> return 1
+# - empty string -> return 0
+# - all same characters -> return 1
+# - all unique characters -> return text.length
 
-def length_of_longest_substring_brute(text)
+def length_of_longest_substring_true_brute_force(text)
   max_length = 0
 
   (0...text.length).each do |left|
     (left...text.length).each do |right|
-      window = text[left..right].chars
-      max_length = [max_length, right - left + 1].max if window.uniq.length == window.length
+      substring = text[left..right]
+      next unless substring.chars.uniq.length == substring.length
+
+      max_length = [max_length, substring.length].max
     end
   end
 
@@ -67,30 +86,29 @@ def length_of_longest_substring_brute(text)
 end
 
 def length_of_longest_substring(text)
-  counts = Hash.new(0)
   left = 0
-  best_length = 0
+  count = Hash.new(0)
+  max_length = 0
 
   text.each_char.with_index do |char, right|
-    counts[char] += 1
-    left = shrink_duplicate_window(text, counts, left, char)
-    best_length = [best_length, right - left + 1].max
+    count[char] += 1
+
+    while count[char] > 1
+      count[text[left]] -= 1
+      left += 1
+    end
+
+    max_length = [max_length, right - left + 1].max
   end
 
-  best_length
-end
-
-def shrink_duplicate_window(text, counts, left, char)
-  while counts[char] > 1
-    counts[text[left]] -= 1
-    left += 1
-  end
-  left
+  max_length
 end
 
 if __FILE__ == $PROGRAM_NAME
-  s = 'abcab'
+  text = 'abcabcbb'
 
-  puts "Brute force: #{length_of_longest_substring_brute(s)}"
-  puts "Optimized:   #{length_of_longest_substring(s)}"
+  puts "True brute force: #{length_of_longest_substring_true_brute_force(text)}"
+  puts "Optimized:        #{length_of_longest_substring(text)}"
 end
+
+# -- The optimized approach is significantly faster than the true brute force, especially for longer strings.

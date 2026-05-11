@@ -8,6 +8,16 @@
 # number of contiguous subarrays of size exactly k whose average is greater
 # than or equal to threshold.
 #
+# Examples:
+#   Input:  arr = [2,2,2,2,5,5,5,8], k = 3, threshold = 4
+#   Output: 3
+#   Why:    Windows of size 3: [2,2,2]=avg2, [2,2,5]=avg3, [2,5,5]=avg4, [5,5,5]=avg5✓,
+#           [5,5,8]=avg6✓, [5,8,?]... last 3 valid windows have avg>=4 -> count=3.
+#
+#   Input:  arr = [1,1,1,1,1], k = 1, threshold = 0
+#   Output: 5
+#   Why:    Every single element (avg=1) is >= threshold=0 -> all 5 windows qualify.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

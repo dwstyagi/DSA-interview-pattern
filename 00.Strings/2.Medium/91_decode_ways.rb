@@ -6,6 +6,15 @@
 # A message containing letters A-Z can be encoded into numbers where A=1, B=2, ..., Z=26.
 # Given a string s of digits, return the number of ways to decode it.
 #
+# Examples:
+#   Input:  s = "12"
+#   Output: 2
+#   Why:    "12" can be decoded as "AB" (1,2) or "L" (12) -> 2 ways.
+#
+#   Input:  s = "226"
+#   Output: 3
+#   Why:    "2,2,6"="BBF", "22,6"="VF", "2,26"="BZ" -> 3 ways.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

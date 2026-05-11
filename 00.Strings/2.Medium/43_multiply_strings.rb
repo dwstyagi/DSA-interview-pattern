@@ -7,6 +7,15 @@
 # return the product of num1 and num2 as a string.
 # You must not convert the inputs to integer directly.
 #
+# Examples:
+#   Input:  num1 = "2", num2 = "3"
+#   Output: "6"
+#   Why:    2 * 3 = 6, stored as string "6".
+#
+#   Input:  num1 = "123", num2 = "456"
+#   Output: "56088"
+#   Why:    Multiply digit by digit like long multiplication: 123 * 456 = 56088.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -58,7 +67,7 @@ def multiply(num1, num2)
   (m - 1).downto(0) do |i|
     (n - 1).downto(0) do |j|
       # Product affects two positions
-      product = (num1[i].to_i) * (num2[j].to_i)
+      product = num1[i].to_i * num2[j].to_i
       p1 = i + j       # higher position (carry)
       p2 = i + j + 1   # lower position
 

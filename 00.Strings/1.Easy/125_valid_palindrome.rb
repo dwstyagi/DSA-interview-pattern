@@ -7,6 +7,15 @@
 # and removing all non-alphanumeric characters, it reads the same forward and backward.
 # Return true if s is a palindrome, false otherwise.
 #
+# Examples:
+#   Input:  s = "A man, a plan, a canal: Panama"
+#   Output: true
+#   Why:    After cleaning -> "amanaplanacanalpanama", which reads the same forwards and backwards.
+#
+#   Input:  s = "race a car"
+#   Output: false
+#   Why:    After cleaning -> "raceacar", reversed is "racaecar" — not equal, so false.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

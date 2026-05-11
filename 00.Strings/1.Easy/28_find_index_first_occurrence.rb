@@ -6,6 +6,15 @@
 # Given two strings haystack and needle, return the index of the first occurrence
 # of needle in haystack, or -1 if needle is not part of haystack.
 #
+# Examples:
+#   Input:  haystack = "sadbutsad", needle = "sad"
+#   Output: 0
+#   Why:    "sad" first appears at index 0 (also at index 6, but we return the first).
+#
+#   Input:  haystack = "leetcode", needle = "leeto"
+#   Output: -1
+#   Why:    "leeto" does not appear anywhere in "leetcode", so return -1.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

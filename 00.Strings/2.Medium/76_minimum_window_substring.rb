@@ -7,6 +7,16 @@
 # character in t (including duplicates) is included in the window.
 # If no such window exists, return "".
 #
+# Examples:
+#   Input:  s = "ADOBECODEBANC", t = "ABC"
+#   Output: "BANC"
+#   Why:    "BANC" is the smallest window containing A, B, and C. "ADOBEC" also works
+#           but is longer (6 vs 4).
+#
+#   Input:  s = "a", t = "b"
+#   Output: ""
+#   Why:    'b' never appears in s, so no valid window exists.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

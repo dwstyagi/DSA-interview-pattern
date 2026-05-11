@@ -7,6 +7,15 @@
 # Roman numerals: I=1, V=5, X=10, L=50, C=100, D=500, M=1000
 # Subtractive cases: IV=4, IX=9, XL=40, XC=90, CD=400, CM=900
 #
+# Examples:
+#   Input:  s = "III"
+#   Output: 3
+#   Why:    I=1, I=1, I=1 -> 1+1+1 = 3.
+#
+#   Input:  s = "MCMXCIV"
+#   Output: 1994
+#   Why:    M=1000, CM=900, XC=90, IV=4 -> 1000+900+90+4 = 1994.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
