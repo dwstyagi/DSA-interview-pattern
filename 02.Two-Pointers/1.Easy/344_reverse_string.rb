@@ -6,6 +6,15 @@
 # Given an array of characters chars, reverse the array in-place.
 # The optimized solution should not allocate another full array for the result.
 #
+# Examples:
+#   Input:  s = ["h","e","l","l","o"]
+#   Output: ["o","l","l","e","h"]
+#   Why:    Swap index 0↔4, 1↔3 in-place; middle 'l' stays.
+#
+#   Input:  s = ["H","a","n","n","a","h"]
+#   Output: ["h","a","n","n","a","H"]
+#   Why:    Swap index 0↔5, 1↔4, 2↔3 — 6 chars fully reversed in-place.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

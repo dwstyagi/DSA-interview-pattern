@@ -82,11 +82,21 @@ def find_anagrams_true_brute_force(text, pattern)
   return [] if pattern.length > text.length
 
   result = []
-  pattern_count = lowercase_count(pattern)
   window_size = pattern.length
+  pattern_count = Array.new(26, 0)
+
+  pattern.each_char do |char|
+    pattern_count[lowercase_index(char)] += 1
+  end
 
   (0..(text.length - window_size)).each do |left|
-    result << left if lowercase_count(text[left, window_size]) == pattern_count
+    window_count = Array.new(26, 0)
+
+    text[left, window_size].each_char do |char|
+      window_count[lowercase_index(char)] += 1
+    end
+
+    result << left if window_count == pattern_count
   end
 
   result
@@ -97,24 +107,26 @@ def find_anagrams(text, pattern)
   return [] if window_size.zero? || window_size > text.length
 
   result = []
-  pattern_count = lowercase_count(pattern)
-  window_count = lowercase_count(text[0, window_size])
+  pattern_count = Array.new(26, 0)
+  window_count = Array.new(26, 0)
+
+  pattern.each_char do |char|
+    pattern_count[lowercase_index(char)] += 1
+  end
+
+  text[0, window_size].each_char do |char|
+    window_count[lowercase_index(char)] += 1
+  end
 
   result << 0 if window_count == pattern_count
 
   (window_size...text.length).each do |right|
     window_count[lowercase_index(text[right])] += 1
     window_count[lowercase_index(text[right - window_size])] -= 1
-    result << right - window_size + 1 if window_count == pattern_count
+    result << (right - window_size + 1) if window_count == pattern_count
   end
 
   result
-end
-
-def lowercase_count(text)
-  count = Array.new(26, 0)
-  text.each_char { |char| count[lowercase_index(char)] += 1 }
-  count
 end
 
 def lowercase_index(char)

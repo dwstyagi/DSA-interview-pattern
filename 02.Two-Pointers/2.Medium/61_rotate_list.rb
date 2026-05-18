@@ -16,6 +16,15 @@ end
 # Problem:
 # Given the head of a linked list, rotate the list to the right by k places.
 #
+# Examples:
+#   Input:  head = [1,2,3,4,5], k = 2
+#   Output: [4,5,1,2,3]
+#   Why:    Rotate right by 2: last 2 nodes [4,5] move to the front.
+#
+#   Input:  head = [0,1,2], k = 4
+#   Output: [2,0,1]
+#   Why:    k=4, length=3, effective rotation = 4%3=1 -> last 1 node [2] moves to front.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -52,15 +61,15 @@ end
 # - k > n           -> k % n used
 
 def rotate_right_brute(head, k)
-  return head if head.nil? || head.next.nil? || k == 0
+  return head if head.nil? || head.next.nil? || k.zero?
 
   # Count length
   n = 1
   curr = head
   curr = curr.next and n += 1 while curr.next
 
-  k = k % n
-  return head if k == 0
+  k = (k % n)
+  return head if k.zero?
 
   # Rotate one step at a time
   k.times do
@@ -77,7 +86,7 @@ def rotate_right_brute(head, k)
 end
 
 def rotate_right(head, k)
-  return head if head.nil? || head.next.nil? || k == 0
+  return head if head.nil? || head.next.nil? || k.zero?
 
   # Step 1: find length and tail
   tail = head
@@ -88,8 +97,8 @@ def rotate_right(head, k)
   end
 
   # Step 2: compute effective rotation
-  k = k % n
-  return head if k == 0
+  k = (k % n)
+  return head if k.zero?
 
   # Step 3: new tail is at position n-k-1 (0-indexed)
   new_tail = head
@@ -97,7 +106,7 @@ def rotate_right(head, k)
 
   # Step 4: new head is node after new tail
   new_head = new_tail.next
-  new_tail.next = nil   # break cycle
+  new_tail.next = nil # break cycle
 
   # Step 5: connect old tail to old head
   tail.next = head

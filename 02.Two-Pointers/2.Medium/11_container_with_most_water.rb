@@ -9,6 +9,15 @@
 # Area between two indices:
 #   (right - left) * [height[left], height[right]].min
 #
+# Examples:
+#   Input:  height = [1,8,6,2,5,4,8,3,7]
+#   Output: 49
+#   Why:    Lines at index 1 (h=8) and 8 (h=7): width=7, min height=7 -> area=49.
+#
+#   Input:  height = [1,1]
+#   Output: 1
+#   Why:    Only two lines, width=1, min height=1 -> area=1.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

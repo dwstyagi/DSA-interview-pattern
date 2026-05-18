@@ -7,6 +7,15 @@
 # such that i, j, k are distinct indices and nums[i] + nums[j] + nums[k] == 0.
 # The solution must not contain duplicate triplets.
 #
+# Examples:
+#   Input:  nums = [-1,0,1,2,-1,-4]
+#   Output: [[-1,-1,2],[-1,0,1]]
+#   Why:    Sort -> [-4,-1,-1,0,1,2]. Fix each element, two-pointer on the rest for sum=0.
+#
+#   Input:  nums = [0,1,1]
+#   Output: []
+#   Why:    No three numbers sum to 0 — only triplet is [0,1,1]=2.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -67,52 +76,49 @@
 def three_sum_brute(nums)
   len = nums.length
   (0...len).each_with_object(Set.new) do |idx, result|
-    collect_triplets(nums, idx, len, result)
+    ((idx + 1)...len).each do |j|
+      ((j + 1)...len).each do |k|
+        result.add([nums[idx], nums[j], nums[k]].sort) if (nums[idx] + nums[j] + nums[k]).zero?
+      end
+    end
   end.to_a
 end
 
-def collect_triplets(nums, idx, len, result)
-  ((idx + 1)...len).each do |j|
-    ((j + 1)...len).each do |k|
-      result.add([nums[idx], nums[j], nums[k]].sort) if (nums[idx] + nums[j] + nums[k]).zero?
-    end
-  end
-end
-
+# rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 def three_sum(nums)
   nums.sort!
-  (0...(nums.length - 2)).each_with_object([]) do |idx, result|
-    next if idx.positive? && nums[idx] == nums[idx - 1]
-
-    result.concat(find_pairs(nums, idx))
-  end
-end
-
-def find_pairs(nums, idx)
   result = []
-  left = idx + 1
-  right = nums.length - 1
-  left, right = advance_from_sum(nums, result, idx, left, right) while left < right
+
+  (0...(nums.size - 2)).each do |i|
+    next if i.positive? && nums[i] == nums[i - 1] # Skip duplicates
+
+    left = i + 1
+    right = nums.size - 1
+
+    while left < right
+      sum = nums[i] + nums[left] + nums[right]
+
+      if sum.zero?
+        # Record triplet
+        result << [nums[i], nums[left], nums[right]]
+        left += 1
+        right -= 1
+
+        # Skip duplicates
+        left += 1 while left < right && nums[left] == nums[left - 1]
+        right -= 1 while left < right && nums[right] == nums[right + 1]
+
+      elsif sum.negative?
+        left += 1
+      else
+        right -= 1
+      end
+    end
+  end
+
   result
 end
-
-def advance_from_sum(nums, result, idx, left, right)
-  sum = nums[idx] + nums[left] + nums[right]
-  if sum.zero?
-    result << [nums[idx], nums[left], nums[right]]
-    skip_duplicates(nums, left + 1, right - 1)
-  elsif sum.negative?
-    [left + 1, right]
-  else
-    [left, right - 1]
-  end
-end
-
-def skip_duplicates(nums, left, right)
-  left += 1 while left < right && nums[left] == nums[left - 1]
-  right -= 1 while left < right && nums[right] == nums[right + 1]
-  [left, right]
-end
+# rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
 if __FILE__ == $PROGRAM_NAME
   nums = [-1, 0, 1, 2, -1, -4]

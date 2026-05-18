@@ -7,6 +7,15 @@
 # each unique element appears only once. Return the number of unique elements.
 # Only the first k positions of nums need to contain the final unique values.
 #
+# Examples:
+#   Input:  nums = [1,1,2]
+#   Output: 2, nums = [1,2,_]
+#   Why:    Two unique values. Slow pointer writes each new unique value in-place.
+#
+#   Input:  nums = [0,0,1,1,1,2,2,3,3,4]
+#   Output: 5, nums = [0,1,2,3,4,_,_,_,_,_]
+#   Why:    5 unique values written to the front; trailing elements don't matter.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

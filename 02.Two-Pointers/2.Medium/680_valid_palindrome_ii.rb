@@ -6,6 +6,15 @@
 # Given a string text, return true if it can be a palindrome after deleting at
 # most one character.
 #
+# Examples:
+#   Input:  s = "aba"
+#   Output: true
+#   Why:    Already a palindrome — no deletion needed.
+#
+#   Input:  s = "abca"
+#   Output: true
+#   Why:    Delete 'c' -> "aba" (palindrome), or delete 'b' -> "aca" (palindrome). Either works.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

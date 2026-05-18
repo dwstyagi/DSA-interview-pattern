@@ -114,6 +114,7 @@ def contains_nearby_almost_duplicate_true_brute_force?(nums, index_diff, value_d
   false
 end
 
+# rubocop:disable Metrics/CyclomaticComplexity
 def contains_nearby_almost_duplicate?(nums, index_diff, value_diff)
   return false if index_diff.zero? || value_diff.negative?
 
@@ -137,6 +138,7 @@ def contains_nearby_almost_duplicate?(nums, index_diff, value_diff)
 
   false
 end
+# rubocop:enable Metrics/CyclomaticComplexity
 
 if __FILE__ == $PROGRAM_NAME
   nums = [1, 2, 3, 1]

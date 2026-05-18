@@ -6,6 +6,16 @@
 # Given an integer array nums containing only 0, 1, and 2, sort the array
 # in-place so that all 0s come first, then all 1s, then all 2s.
 #
+# Examples:
+#   Input:  nums = [2,0,2,1,1,0]
+#   Output: [0,0,1,1,2,2]
+#   Why:    Dutch National Flag: low pointer collects 0s, high pointer collects 2s,
+#           mid pointer scans — all 1s end up in the middle.
+#
+#   Input:  nums = [2,0,1]
+#   Output: [0,1,2]
+#   Why:    One pass with three pointers places 0,1,2 in correct positions.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

@@ -6,6 +6,16 @@
 # Given the head of a singly linked list and an integer n, remove the nth node
 # from the end of the list and return the head of the modified list.
 #
+# Examples:
+#   Input:  head = [1,2,3,4,5], n = 2
+#   Output: [1,2,3,5]
+#   Why:    2nd from end is node 4. Fast pointer leads by n=2 steps; when fast reaches
+#           end, slow is just before the target node -> remove it.
+#
+#   Input:  head = [1], n = 1
+#   Output: []
+#   Why:    Only one node, removing it leaves an empty list.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

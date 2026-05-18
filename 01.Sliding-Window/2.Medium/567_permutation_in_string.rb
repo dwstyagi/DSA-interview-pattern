@@ -94,11 +94,21 @@
 def check_inclusion_true_brute_force?(pattern, text)
   return false if pattern.length > text.length
 
-  needed_counts = lowercase_counts(pattern)
   window_size = pattern.length
+  needed_counts = Array.new(26, 0)
+
+  pattern.each_char do |char|
+    needed_counts[lowercase_index(char)] += 1
+  end
 
   (0..(text.length - window_size)).any? do |left|
-    lowercase_counts(text[left, window_size]) == needed_counts
+    window_counts = Array.new(26, 0)
+
+    text[left, window_size].each_char do |char|
+      window_counts[lowercase_index(char)] += 1
+    end
+
+    window_counts == needed_counts
   end
 end
 
@@ -106,32 +116,26 @@ def check_inclusion?(pattern, text)
   return false if pattern.length > text.length
 
   window_size = pattern.length
-  needed_counts = lowercase_counts(pattern)
-  window_counts = lowercase_counts(text[0, window_size])
+  needed_counts = Array.new(26, 0)
+  window_counts = Array.new(26, 0)
+
+  pattern.each_char do |char|
+    needed_counts[lowercase_index(char)] += 1
+  end
+
+  text[0, window_size].each_char do |char|
+    window_counts[lowercase_index(char)] += 1
+  end
 
   return true if window_counts == needed_counts
 
-  inclusion_window_match?(text, window_size, needed_counts, window_counts)
-end
-
-def inclusion_window_match?(text, window_size, needed_counts, window_counts)
   (window_size...text.length).each do |right|
-    update_lowercase_window_counts(window_counts, text[right], text[right - window_size])
+    window_counts[lowercase_index(text[right])] += 1
+    window_counts[lowercase_index(text[right - window_size])] -= 1
     return true if window_counts == needed_counts
   end
 
   false
-end
-
-def lowercase_counts(text)
-  count = Array.new(26, 0)
-  text.each_char { |char| count[lowercase_index(char)] += 1 }
-  count
-end
-
-def update_lowercase_window_counts(window_counts, incoming_char, outgoing_char)
-  window_counts[lowercase_index(incoming_char)] += 1
-  window_counts[lowercase_index(outgoing_char)] -= 1
 end
 
 def lowercase_index(char)

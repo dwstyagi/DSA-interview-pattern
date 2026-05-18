@@ -107,6 +107,7 @@ def min_window_true_brute_force(text, pattern)
   best
 end
 
+# rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 def min_window(text, pattern)
   return '' if pattern.length > text.length
 
@@ -140,6 +141,7 @@ def min_window(text, pattern)
 
   best_length == Float::INFINITY ? '' : text[best_start, best_length]
 end
+# rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
 if __FILE__ == $PROGRAM_NAME
   text = 'ADOBECODEBANC'

@@ -94,14 +94,23 @@ def max_sliding_window_true_brute_force(nums, window_size)
 end
 
 def max_sliding_window(nums, window_size)
-  deque = []
   result = []
+  queue = []
 
-  nums.each_with_index do |num, right|
-    deque.shift if !deque.empty? && deque[0] <= right - window_size
-    deque.pop while !deque.empty? && nums[deque[-1]] <= num
-    deque << right
-    result << nums[deque[0]] if right >= window_size - 1
+  left = 0
+  right = 0
+
+  while right < nums.length
+    queue.pop while !queue.empty? && nums[right] > nums[queue[-1]]
+    queue.push(right)
+    queue.shift if left > queue[0]
+
+    if ((right - left) + 1) == window_size
+      result << nums[queue[0]]
+      left += 1
+    end
+
+    right += 1
   end
 
   result

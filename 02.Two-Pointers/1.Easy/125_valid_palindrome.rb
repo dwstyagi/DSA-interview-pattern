@@ -6,6 +6,15 @@
 # Given a string text, return true if it is a palindrome after converting all
 # uppercase letters to lowercase and removing all non-alphanumeric characters.
 #
+# Examples:
+#   Input:  s = "A man, a plan, a canal: Panama"
+#   Output: true
+#   Why:    After cleaning -> "amanaplanacanalpanama", reads same forwards and backwards.
+#
+#   Input:  s = "race a car"
+#   Output: false
+#   Why:    After cleaning -> "raceacar", reversed is "racaecar" — not equal.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

@@ -6,6 +6,15 @@
 # Given an integer array nums and an integer target, return all unique
 # quadruplets [a, b, c, d] such that a + b + c + d == target.
 #
+# Examples:
+#   Input:  nums = [1,0,-1,0,-2,2], target = 0
+#   Output: [[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]
+#   Why:    Sort, fix two outer pointers, two-pointer on the rest for sum=target.
+#
+#   Input:  nums = [2,2,2,2,2], target = 8
+#   Output: [[2,2,2,2]]
+#   Why:    Only one unique quadruplet sums to 8: [2,2,2,2].
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

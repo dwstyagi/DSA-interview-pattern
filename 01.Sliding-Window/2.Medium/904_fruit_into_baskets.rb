@@ -116,21 +116,17 @@ def total_fruit(fruits)
 
   fruits.each_with_index do |fruit, right|
     count[fruit] += 1
-    left = shrink_fruit_window(fruits, count, left) if count.length > 2
+
+    while count.length > 2
+      count[fruits[left]] -= 1
+      count.delete(fruits[left]) if count[fruits[left]].zero?
+      left += 1
+    end
+
     max_length = [max_length, right - left + 1].max
   end
 
   max_length
-end
-
-def shrink_fruit_window(fruits, count, left)
-  while count.length > 2
-    count[fruits[left]] -= 1
-    count.delete(fruits[left]) if count[fruits[left]].zero?
-    left += 1
-  end
-
-  left
 end
 
 if __FILE__ == $PROGRAM_NAME

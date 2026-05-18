@@ -6,6 +6,16 @@
 # Given an integer array nums sorted in non-decreasing order, return an array
 # of the squares of each number also sorted in non-decreasing order.
 #
+# Examples:
+#   Input:  nums = [-4,-1,0,3,10]
+#   Output: [0,1,9,16,100]
+#   Why:    Squares: [16,1,0,9,100]. Largest squares are at the ends; use two pointers
+#           to merge from outside in -> sorted [0,1,9,16,100].
+#
+#   Input:  nums = [-7,-3,2,3,11]
+#   Output: [4,9,9,49,121]
+#   Why:    Squares: [49,9,4,9,121]. Two-pointer merge fills result from right to left.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -63,23 +73,24 @@ def sorted_squares_true_brute_force(nums)
 end
 
 def sorted_squares(nums)
-  result = Array.new(nums.length)
   left = 0
   right = nums.length - 1
-  (nums.length - 1).downto(0) do |write|
-    left, right = fill_square(nums, result, write, left, right)
+  write = nums.length - 1
+
+  result = Array.new(nums.length)
+
+  while left <= right
+    if nums[left].abs <= nums[right].abs
+      result[write] = nums[right]**2
+      right -= 1
+    else
+      result[write] = nums[left]**2
+      left += 1
+    end
+
+    write -= 1
   end
   result
-end
-
-def fill_square(nums, result, write, left, right)
-  if nums[left].abs > nums[right].abs
-    result[write] = nums[left] * nums[left]
-    [left + 1, right]
-  else
-    result[write] = nums[right] * nums[right]
-    [left, right - 1]
-  end
 end
 
 if __FILE__ == $PROGRAM_NAME

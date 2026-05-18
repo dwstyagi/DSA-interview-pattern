@@ -6,6 +6,16 @@
 # Given n non-negative integers representing an elevation map where the width of each bar is 1,
 # compute how much water it can trap after raining.
 #
+# Examples:
+#   Input:  height = [0,1,0,2,1,0,1,3,2,1,2,1]
+#   Output: 6
+#   Why:    Water trapped at each index = min(max_left, max_right) - height[i].
+#           Total trapped = 6 units using two-pointer approach.
+#
+#   Input:  height = [4,2,0,3,2,5]
+#   Output: 9
+#   Why:    9 units of water fill the valleys between the bars.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -45,9 +55,9 @@ def trap_brute(height)
   n = height.length
   water = 0
 
-  (1...n - 1).each do |i|
+  (1...(n - 1)).each do |i|
     max_left  = height[0...i].max || 0
-    max_right = height[(i + 1)..].max || 0
+    max_right = height[(i + 1)...n].max || 0
     bound = [max_left, max_right].min
     water += [bound - height[i], 0].max
   end
@@ -60,8 +70,10 @@ def trap(height)
 
   left  = 0
   right = height.length - 1
+
   max_left  = 0
   max_right = 0
+
   water = 0
 
   while left < right

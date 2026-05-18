@@ -6,6 +6,15 @@
 # Given an integer array nums and an integer target, return the sum of three
 # integers in nums such that the sum is closest to target.
 #
+# Examples:
+#   Input:  nums = [-1,2,1,-4], target = 1
+#   Output: 2
+#   Why:    Triplets: (-1+2+1)=2, (-1+2-4)=-3, (2+1-4)=-1. Closest to 1 is 2.
+#
+#   Input:  nums = [0,0,0], target = 1
+#   Output: 0
+#   Why:    Only triplet is [0,0,0] with sum=0, which is closest to 1.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -76,7 +85,9 @@ def three_sum_closest_true_brute_force(nums, target)
     ((first + 1)...(nums.length - 1)).each do |second|
       ((second + 1)...nums.length).each do |third|
         current_sum = nums[first] + nums[second] + nums[third]
-        closest_sum = closer_sum(current_sum, closest_sum, target)
+        current_distance = (current_sum - target).abs
+        closest_distance = (closest_sum - target).abs
+        closest_sum = current_sum if current_distance < closest_distance
       end
     end
   end
@@ -89,37 +100,25 @@ def three_sum_closest(nums, target)
   closest_sum = nums[0] + nums[1] + nums[2]
 
   (0...(nums.length - 2)).each do |fixed_index|
-    closest_sum = scan_closest_pair(nums, fixed_index, target, closest_sum)
-    return target if closest_sum == target
+    left = fixed_index + 1
+    right = nums.length - 1
+
+    while left < right
+      current_sum = nums[fixed_index] + nums[left] + nums[right]
+      current_distance = (current_sum - target).abs
+      closest_distance = (closest_sum - target).abs
+      closest_sum = current_sum if current_distance < closest_distance
+      return target if current_sum == target
+
+      if current_sum < target
+        left += 1
+      else
+        right -= 1
+      end
+    end
   end
 
   closest_sum
-end
-
-def scan_closest_pair(nums, fixed_index, target, closest_sum)
-  left = fixed_index + 1
-  right = nums.length - 1
-
-  while left < right
-    current_sum = nums[fixed_index] + nums[left] + nums[right]
-    closest_sum = closer_sum(current_sum, closest_sum, target)
-    left, right = move_closest_pointers(current_sum, target, left, right)
-  end
-
-  closest_sum
-end
-
-def closer_sum(current_sum, closest_sum, target)
-  current_distance = (current_sum - target).abs
-  closest_distance = (closest_sum - target).abs
-  current_distance < closest_distance ? current_sum : closest_sum
-end
-
-def move_closest_pointers(current_sum, target, left, right)
-  return [left + 1, right] if current_sum < target
-  return [left, right - 1] if current_sum > target
-
-  [left, left]
 end
 
 if __FILE__ == $PROGRAM_NAME

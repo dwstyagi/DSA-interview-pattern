@@ -8,6 +8,16 @@
 # Each boat can carry at most two people, and their total weight must be
 # less than or equal to limit.
 #
+# Examples:
+#   Input:  people = [1,2], limit = 3
+#   Output: 1
+#   Why:    Both people (weight 1+2=3) fit in one boat at the limit.
+#
+#   Input:  people = [3,2,2,1], limit = 3
+#   Output: 3
+#   Why:    Sort->[1,2,2,3]. Pair 1+3=4>3 so 3 goes alone; pair 1+2=3 ok; 2 alone -> 3 boats.
+#           Wait: 1+2 fit, 2 alone, 3 alone -> 3 boats.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

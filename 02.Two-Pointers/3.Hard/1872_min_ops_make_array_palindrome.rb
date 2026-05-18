@@ -7,6 +7,15 @@
 # (replace them with their sum). Return the minimum number of operations to make
 # the array a palindrome.
 #
+# Examples:
+#   Input:  nums = [1,2,3,1]
+#   Output: 1
+#   Why:    Merge nums[1]=2 and nums[2]=3 into one element -> [1,5,1], which is a palindrome.
+#
+#   Input:  nums = [1,2,3,3]
+#   Output: 2
+#   Why:    Need 2 merge ops to make palindrome: merge middle pairs until both ends match.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -46,9 +55,6 @@
 def min_operations_brute(nums)
   # Simulate all possible merges and find minimum to reach palindrome
   # (simplified brute: try greedy left-first then right-first)
-  def check_palindrome(arr)
-    arr == arr.reverse
-  end
 
   count = 0
   arr = nums.dup

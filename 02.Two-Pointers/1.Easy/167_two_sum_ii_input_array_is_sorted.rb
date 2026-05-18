@@ -8,6 +8,15 @@
 # The problem guarantees exactly one solution, and the same element cannot be
 # used twice.
 #
+# Examples:
+#   Input:  numbers = [2,7,11,15], target = 9
+#   Output: [1,2]
+#   Why:    numbers[0]+numbers[1]=2+7=9. Return 1-indexed positions [1,2].
+#
+#   Input:  numbers = [2,3,4], target = 6
+#   Output: [1,3]
+#   Why:    numbers[0]+numbers[2]=2+4=6 -> positions [1,3].
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

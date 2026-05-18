@@ -7,6 +7,15 @@
 # relative order of the non-zero elements. The optimized solution should modify
 # the array in-place.
 #
+# Examples:
+#   Input:  nums = [0,1,0,3,12]
+#   Output: [1,3,12,0,0]
+#   Why:    Non-zero values 1,3,12 shift left in order; two zeros fill the tail.
+#
+#   Input:  nums = [0]
+#   Output: [0]
+#   Why:    Single zero — nothing to move, array unchanged.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

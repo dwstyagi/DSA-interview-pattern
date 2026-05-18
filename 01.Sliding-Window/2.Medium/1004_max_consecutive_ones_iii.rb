@@ -7,7 +7,7 @@
 # consecutive 1's in the array if you can flip at most k 0's.
 #
 # Examples:
-#   Input:  nums = [1,1,1,0,0,0,1,1,1,1,0], k = 2
+#   Input:  nums = [1,1,1,0,0,0,1,1,1,1,0,0], k = 2
 #   Output: 6
 #   Why:    Flip the two 0s at indices 9,10: window [1,1,1,1,0,0] -> flip -> 6 consecutive 1s.
 #           Actually best window is indices 5..10 after flipping 2 zeros -> length 6.
@@ -55,7 +55,7 @@
 # -----------------------------------------------------------------------------
 # Dry Run
 #
-# nums = [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0]
+# nums = [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0]
 # k = 2
 #
 # right = 0..4
@@ -103,24 +103,20 @@ def longest_ones(nums, flip_limit)
 
   nums.each_with_index do |num, right|
     zero_count += 1 if num.zero?
-    left, zero_count = shrink_zero_window(nums, left, zero_count, flip_limit) if zero_count > flip_limit
+
+    while zero_count > flip_limit
+      zero_count -= 1 if nums[left].zero?
+      left += 1
+    end
+
     max_length = [max_length, right - left + 1].max
   end
 
   max_length
 end
 
-def shrink_zero_window(nums, left, zero_count, flip_limit)
-  while zero_count > flip_limit
-    zero_count -= 1 if nums[left].zero?
-    left += 1
-  end
-
-  [left, zero_count]
-end
-
 if __FILE__ == $PROGRAM_NAME
-  nums = [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0]
+  nums = [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0]
   k = 2
 
   puts "True brute force: #{longest_ones_true_brute_force(nums, k)}"
