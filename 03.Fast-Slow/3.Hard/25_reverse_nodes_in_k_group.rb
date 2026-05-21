@@ -8,6 +8,15 @@
 # then the remaining nodes at the end should stay as-is.
 # You may not alter the values in the nodes — only change pointers.
 #
+# Examples:
+#   Input:  head = [1,2,3,4,5], k = 2
+#   Output: [2,1,4,3,5]
+#   Why:    Reverse [1,2]->[2,1], reverse [3,4]->[4,3], [5] stays (< k nodes left).
+#
+#   Input:  head = [1,2,3,4,5], k = 3
+#   Output: [3,2,1,4,5]
+#   Why:    Reverse [1,2,3]->[3,2,1], only 2 nodes left (< k) so [4,5] stays as-is.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -62,7 +71,7 @@
 # - Empty list -> return nil
 
 # singly linked list node
-class ListNode # rubocop:disable Style/Documentation
+class ListNode
   attr_accessor :val, :next
 
   def initialize(val)

@@ -9,6 +9,15 @@ require 'set'
 # otherwise return false. A cycle exists if some node can be reached again by
 # continuously following the next pointer.
 #
+# Examples:
+#   Input:  head = [3,2,0,-4], pos = 1 (tail connects to index 1)
+#   Output: true
+#   Why:    There is a cycle: -4 points back to node 2. Fast/slow pointers will meet.
+#
+#   Input:  head = [1], pos = -1
+#   Output: false
+#   Why:    Single node with no cycle. Fast pointer reaches nil immediately.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

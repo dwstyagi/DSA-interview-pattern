@@ -6,6 +6,15 @@
 # Given the head of a sorted linked list, delete all duplicates such that
 # each element appears only once. Return the modified list.
 #
+# Examples:
+#   Input:  head = [1,1,2]
+#   Output: [1,2]
+#   Why:    Second 1 is a duplicate — remove it, leaving [1,2].
+#
+#   Input:  head = [1,1,2,3,3]
+#   Output: [1,2,3]
+#   Why:    Remove duplicate 1 and duplicate 3 -> [1,2,3].
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

@@ -9,6 +9,15 @@
 # endlessly in a cycle that does not include 1 (not happy).
 # Return true if n is a happy number, false otherwise.
 #
+# Examples:
+#   Input:  n = 19
+#   Output: true
+#   Why:    1²+9²=82, 8²+2²=68, 6²+8²=100, 1²+0²+0²=1 -> reached 1, happy!
+#
+#   Input:  n = 2
+#   Output: false
+#   Why:    2->4->16->37->58->89->145->42->20->4 (cycle detected, never reaches 1).
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -53,25 +62,25 @@
 # - n = 7 -> happy (7->49->97->130->10->1)
 
 # compute sum of squares of digits
-def digit_square_sum(n)
+def digit_square_sum(num)
   sum = 0
-  while n > 0
-    digit = n % 10      # extract last digit
+  while num.positive?
+    digit = num % 10 # extract last digit
     sum += digit * digit # square it and add
-    n /= 10             # remove last digit
+    num /= 10 # remove last digit
   end
   sum
 end
 
 # brute force: use a Set to detect when we revisit a number
-def happy_number_brute?(n)
+def happy_number_brute?(num)
   seen = Set.new
 
-  until n == 1
-    return false if seen.include?(n) # cycle detected
+  until num == 1
+    return false if seen.include?(num) # cycle detected
 
-    seen.add(n)
-    n = digit_square_sum(n)
+    seen.add(num)
+    num = digit_square_sum(num)
   end
 
   true # reached 1 -> happy
@@ -79,13 +88,13 @@ end
 
 # optimized: Floyd's cycle detection on the implicit digit-square sequence
 # slow moves 1 step, fast moves 2 steps
-def happy_number?(n)
-  slow = n
-  fast = digit_square_sum(n) # fast starts one step ahead
+def happy_number?(num)
+  slow = num
+  fast = digit_square_sum(num) # fast starts one step ahead
 
   # stop when fast reaches 1 (happy) or slow catches fast (cycle)
   while fast != 1 && slow != fast
-    slow = digit_square_sum(slow)              # 1 step
+    slow = digit_square_sum(slow) # 1 step
     fast = digit_square_sum(digit_square_sum(fast)) # 2 steps
   end
 

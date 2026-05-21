@@ -7,6 +7,16 @@
 # Reorder it to: L0 -> Ln -> L1 -> Ln-1 -> L2 -> Ln-2 -> ...
 # Do not return a new list — modify in-place.
 #
+# Examples:
+#   Input:  head = [1,2,3,4]
+#   Output: [1,4,2,3]
+#   Why:    Interleave first half and reversed second half: 1->4->2->3.
+#
+#   Input:  head = [1,2,3,4,5]
+#   Output: [1,5,2,4,3]
+#   Why:    Find middle (3), reverse second half (5->4->3... wait, 4->5), interleave:
+#           1->5->2->4->3.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -60,7 +70,7 @@
 # - Even length: 1->2->3->4 -> 1->4->2->3
 
 # singly linked list node
-class ListNode # rubocop:disable Style/Documentation
+class ListNode
   attr_accessor :val, :next
 
   def initialize(val)

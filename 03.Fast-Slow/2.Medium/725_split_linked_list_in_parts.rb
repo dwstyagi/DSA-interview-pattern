@@ -8,6 +8,15 @@
 # Earlier parts should be longer if the list can't be split evenly.
 # Return an array of k parts (use nil for empty parts).
 #
+# Examples:
+#   Input:  head = [1,2,3], k = 5
+#   Output: [[1],[2],[3],[],[]]
+#   Why:    3 nodes into 5 parts: first 3 get 1 node each, last 2 are empty.
+#
+#   Input:  head = [1,2,3,4,5,6,7,8,9,10], k = 3
+#   Output: [[1,2,3,4],[5,6,7],[8,9,10]]
+#   Why:    10 nodes / 3 parts = 3 each, with 1 extra -> first part gets 4, rest get 3.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -55,7 +64,7 @@
 # - Empty list: return k nil parts
 
 # singly linked list node
-class ListNode # rubocop:disable Style/Documentation
+class ListNode
   attr_accessor :val, :next
 
   def initialize(val)
@@ -65,7 +74,7 @@ class ListNode # rubocop:disable Style/Documentation
 end
 
 # optimized: count length, compute sizes, cut in-place
-def split_list_to_parts(head, k)
+def split_list_to_parts(head, size)
   # count total length
   length = 0
   current = head
@@ -74,16 +83,16 @@ def split_list_to_parts(head, k)
     current = current.next
   end
 
-  base = length / k      # minimum nodes per part
-  remainder = length % k # first `remainder` parts get one extra node
+  base = length / size      # minimum nodes per part
+  remainder = length % size # first `remainder` parts get one extra node
 
-  result = Array.new(k)  # pre-fill with nil for empty parts
+  result = Array.new(size)  # pre-fill with nil for empty parts
   current = head
 
-  k.times do |i|
+  size.times do |i|
     part_head = current
-    part_size = base + (remainder > 0 ? 1 : 0) # extra node for early parts
-    remainder -= 1 if remainder > 0
+    part_size = base + (remainder.positive? ? 1 : 0) # extra node for early parts
+    remainder -= 1 if remainder.positive?
 
     # advance to the last node of this part
     (part_size - 1).times { current = current.next if current }

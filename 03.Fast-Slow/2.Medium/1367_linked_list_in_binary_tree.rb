@@ -8,6 +8,15 @@
 # path in the binary tree, false otherwise.
 # A downward path means going from a node to any descendant (not necessarily a leaf).
 #
+# Examples:
+#   Input:  head = [4,2,8], root = [1,4,4,null,2,2,null,1,null,6,8]
+#   Output: true
+#   Why:    Path 4->2->8 exists as a downward path in the tree (right subtree, root 4).
+#
+#   Input:  head = [1,4,2,6,8], root = [1,4,4,null,2,2,null,1,null,6,8]
+#   Output: false
+#   Why:    No downward path in the tree matches the full sequence 1->4->2->6->8.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -63,7 +72,7 @@
 # - List longer than any path -> false
 
 # linked list node
-class ListNode # rubocop:disable Style/Documentation
+class ListNode
   attr_accessor :val, :next
 
   def initialize(val)
@@ -73,7 +82,7 @@ class ListNode # rubocop:disable Style/Documentation
 end
 
 # binary tree node
-class TreeNode # rubocop:disable Style/Documentation
+class TreeNode
   attr_accessor :val, :left, :right
 
   def initialize(val)
@@ -96,13 +105,13 @@ def dfs_match(list_node, tree_node)
 end
 
 # try to start a match from every tree node
-def is_sub_path(head, root) # rubocop:disable Naming/MethodName
+def sub_path?(head, root)
   return false if root.nil? # no more tree nodes to try
 
   # try starting match at this tree node, or recurse into children
   dfs_match(head, root) ||
-    is_sub_path(head, root.left) ||
-    is_sub_path(head, root.right)
+    sub_path?(head, root.left) ||
+    sub_path?(head, root.right)
 end
 
 if __FILE__ == $PROGRAM_NAME
@@ -122,5 +131,5 @@ if __FILE__ == $PROGRAM_NAME
   t2.left = t3
   t3.right = t4
 
-  puts "Path exists: #{is_sub_path(l1, t1)}"
+  puts "Path exists: #{sub_path?(l1, t1)}"
 end

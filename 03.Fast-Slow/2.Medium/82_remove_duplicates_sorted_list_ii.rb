@@ -7,6 +7,15 @@
 # numbers, leaving only distinct numbers. Return the modified list.
 # (Unlike LC 83, remove ALL occurrences of duplicated values, not just extras.)
 #
+# Examples:
+#   Input:  head = [1,2,3,3,4,4,5]
+#   Output: [1,2,5]
+#   Why:    3 and 4 both appear more than once — remove ALL occurrences of each.
+#
+#   Input:  head = [1,1,1,2,3]
+#   Output: [2,3]
+#   Why:    1 appears 3 times — all removed. Only unique nodes 2 and 3 remain.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -56,7 +65,7 @@
 # - Duplicates at head -> dummy node handles this cleanly
 
 # singly linked list node
-class ListNode # rubocop:disable Style/Documentation
+class ListNode
   attr_accessor :val, :next
 
   def initialize(val)
@@ -95,7 +104,8 @@ end
 def delete_duplicates(head)
   dummy = ListNode.new(0)
   dummy.next = head
-  prev = dummy    # last confirmed non-duplicate node
+
+  prev = dummy # last confirmed non-duplicate node
   current = head
 
   while current

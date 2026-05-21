@@ -6,6 +6,15 @@
 # Given a linked list, swap every two adjacent nodes and return its head.
 # You must solve it without modifying the node values — only change pointers.
 #
+# Examples:
+#   Input:  head = [1,2,3,4]
+#   Output: [2,1,4,3]
+#   Why:    Swap pairs: (1,2) -> (2,1), (3,4) -> (4,3) -> [2,1,4,3].
+#
+#   Input:  head = [1]
+#   Output: [1]
+#   Why:    Only one node — no pair to swap, return as-is.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -81,7 +90,7 @@ def swap_pairs_brute(head)
   end
 
   # swap adjacent pairs in the array
-  (0...values.length - 1).step(2) do |i|
+  (0...(values.length - 1)).step(2) do |i|
     values[i], values[i + 1] = values[i + 1], values[i]
   end
 

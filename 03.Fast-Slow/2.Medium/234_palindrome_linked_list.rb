@@ -6,6 +6,15 @@
 # Given the head of a singly linked list, return true if it is a palindrome,
 # false otherwise.
 #
+# Examples:
+#   Input:  head = [1,2,2,1]
+#   Output: true
+#   Why:    Find middle, reverse second half -> [1,2], compare with first half [1,2] -> match.
+#
+#   Input:  head = [1,2]
+#   Output: false
+#   Why:    First half [1], reversed second half [2] -> 1 != 2, not a palindrome.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -63,7 +72,7 @@
 # - Two different nodes -> false
 
 # singly linked list node
-class ListNode # rubocop:disable Style/Documentation
+class ListNode
   attr_accessor :val, :next
 
   def initialize(val)

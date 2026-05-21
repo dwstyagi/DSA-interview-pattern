@@ -6,6 +6,16 @@
 # Given an array of k linked lists, each sorted in ascending order,
 # merge all lists into one sorted linked list and return its head.
 #
+# Examples:
+#   Input:  lists = [[1,4,5],[1,3,4],[2,6]]
+#   Output: [1,1,2,3,4,4,5,6]
+#   Why:    Divide and conquer: merge pairs until one list remains.
+#           Round1: [1,1,3,4,4,5]+[2,6], Round2: [1,1,2,3,4,4,5,6].
+#
+#   Input:  lists = []
+#   Output: []
+#   Why:    No lists to merge — return nil/empty.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -55,7 +65,7 @@
 # - k=1 -> return the single list as-is
 
 # singly linked list node
-class ListNode # rubocop:disable Style/Documentation
+class ListNode
   attr_accessor :val, :next
 
   def initialize(val)
@@ -65,22 +75,23 @@ class ListNode # rubocop:disable Style/Documentation
 end
 
 # helper: merge two sorted linked lists into one sorted list
-def merge_two_lists(l1, l2)
+def merge_two_lists(list1, list2)
   dummy = ListNode.new(0)
   current = dummy
 
-  while l1 && l2
-    if l1.val <= l2.val
-      current.next = l1  # take from l1
-      l1 = l1.next
+  while list1 && list2
+    if list1.val <= list2.val
+      current.next = list1
+      list1 = list1.next
     else
-      current.next = l2  # take from l2
-      l2 = l2.next
+      current.next = list2
+      list2 = list2.next
     end
+
     current = current.next
   end
 
-  current.next = l1 || l2 # attach remaining nodes (one list may still have nodes)
+  current.next = list1 || list2
 
   dummy.next
 end

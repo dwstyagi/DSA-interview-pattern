@@ -9,6 +9,15 @@
 # - Move in only one direction (all steps forward or all steps backward)
 # Movement: from index i, next index is (i + nums[i]) % n (circular)
 #
+# Examples:
+#   Input:  nums = [2,-1,1,2,2]
+#   Output: true
+#   Why:    Starting at index 0: 0->2->3->0 forms a cycle of length 3, all positive.
+#
+#   Input:  nums = [-1,2]
+#   Output: false
+#   Why:    No valid cycle — either direction changes or cycle length is 1.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -57,12 +66,12 @@
 # next index in circular array (handles negative steps too)
 def next_index(nums, i)
   n = nums.length
-  ((i + nums[i]) % n + n) % n # double mod to handle negatives in Ruby
+  (((i + nums[i]) % n) + n) % n # double mod to handle negatives in Ruby
 end
 
 # check if two indices move in the same direction
 def same_direction?(nums, i, j)
-  (nums[i] > 0) == (nums[j] > 0)
+  (nums[i].positive? == nums[j].positive?)
 end
 
 # brute force: simulate from each index, track visited

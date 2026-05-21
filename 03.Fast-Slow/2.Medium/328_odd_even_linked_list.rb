@@ -8,6 +8,15 @@
 # The first node is considered odd (index 1), second is even (index 2), etc.
 # Preserve relative order within each group.
 #
+# Examples:
+#   Input:  head = [1,2,3,4,5]
+#   Output: [1,3,5,2,4]
+#   Why:    Odd-indexed nodes: 1,3,5. Even-indexed nodes: 2,4. Concatenate odd+even.
+#
+#   Input:  head = [2,1,3,5,6,4,7]
+#   Output: [2,3,6,7,1,5,4]
+#   Why:    Odd positions (1-based): 2,3,6,7. Even: 1,5,4. Joined: [2,3,6,7,1,5,4].
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -61,7 +70,7 @@
 # - 2 nodes -> no change needed
 
 # singly linked list node
-class ListNode # rubocop:disable Style/Documentation
+class ListNode
   attr_accessor :val, :next
 
   def initialize(val)
@@ -107,7 +116,7 @@ def odd_even_list(head)
   even = head.next     # pointer for even-indexed chain
   even_head = even     # save even chain head to reconnect later
 
-  while even&.next   # continue while even and even.next exist
+  while even&.next         # continue while even and even.next exist
     odd.next = even.next   # odd skips over even, points to next odd
     odd = odd.next         # advance odd pointer
 

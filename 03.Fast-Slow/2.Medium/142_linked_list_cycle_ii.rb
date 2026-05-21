@@ -6,6 +6,16 @@
 # Given the head of a linked list, return the node where the cycle begins.
 # If there is no cycle, return nil.
 #
+# Examples:
+#   Input:  head = [3,2,0,-4], pos = 1
+#   Output: node at index 1 (value 2)
+#   Why:    Cycle starts at index 1. After slow==fast meet, reset one pointer to head;
+#           both advance 1 step at a time — they meet at cycle start.
+#
+#   Input:  head = [1], pos = -1
+#   Output: nil
+#   Why:    No cycle exists, so there is no cycle start node to return.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -60,7 +70,7 @@
 # - Cycle at head -> L=0, pointers meet at head immediately in phase 2
 
 # singly linked list node
-class ListNode # rubocop:disable Style/Documentation
+class ListNode
   attr_accessor :val, :next
 
   def initialize(val)

@@ -7,6 +7,16 @@
 # there is exactly one duplicate number. Find and return it.
 # Must not modify the array and use only O(1) extra space.
 #
+# Examples:
+#   Input:  nums = [1,3,4,2,2]
+#   Output: 2
+#   Why:    2 appears twice. Treat array as linked list (i -> nums[i]); Floyd's cycle
+#           detection finds where the cycle starts — that's the duplicate.
+#
+#   Input:  nums = [3,1,3,4,2]
+#   Output: 3
+#   Why:    3 appears twice. Floyd's: fast/slow meet inside cycle, then reset finds entry=3.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -105,7 +115,7 @@ def find_duplicate(nums)
   # phase 2: find cycle entry = the duplicate number
   slow = 0 # reset slow to start (outside the cycle)
   while slow != fast
-    slow = nums[slow]  # both move 1 step
+    slow = nums[slow] # both move 1 step
     fast = nums[fast]
   end
 

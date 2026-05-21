@@ -6,6 +6,16 @@
 # Given the head of a singly linked list, return the middle node.
 # If there are two middle nodes, return the second middle node.
 #
+# Examples:
+#   Input:  head = [1,2,3,4,5]
+#   Output: [3,4,5]
+#   Why:    5 nodes, middle is node 3. Slow moves 1 step, fast moves 2 — when fast
+#           reaches end, slow is at the middle.
+#
+#   Input:  head = [1,2,3,4,5,6]
+#   Output: [4,5,6]
+#   Why:    6 nodes (even), second middle is node 4. Fast/slow pointers give node 4.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -62,7 +72,7 @@
 # - Two nodes -> return second node (second middle)
 
 # singly linked list node
-class ListNode # rubocop:disable Style/Documentation
+class ListNode
   attr_accessor :val, :next
 
   def initialize(val)
