@@ -8,6 +8,15 @@
 # Return the list of finite intervals representing common free time for all employees,
 # sorted in order.
 #
+# Examples:
+#   Input:  schedule = [[[1,3],[6,7]],[[2,4]],[[2,5],[9,12]]]
+#   Output: [[5,6],[7,9]]
+#   Why:    Merged busy: [1,5],[6,7],[9,12]. Gaps between merged blocks are free time.
+#
+#   Input:  schedule = [[[1,3],[6,7]],[[2,4]]]
+#   Output: [[5,6]]
+#   Why:    Busy intervals merged to [1,4],[6,7]. Gap [5,6] is the only free window.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

@@ -6,6 +6,18 @@
 # Given an array of meeting time intervals where intervals[i] = [start_i, end_i],
 # return the minimum number of conference rooms required.
 #
+# Examples:
+#   Input:  intervals = [[0,30],[5,10],[15,20]]
+#   Output: 2
+#   Why:    At time 5, meetings [0,30] and [5,10] overlap -> need 2 rooms.
+#   - [0, 30] overlaps with [5, 10]
+#   - so at least 2 rooms are needed
+#   - [15, 20] starts after [5, 10] ends, so it can reuse that room
+#
+#   Input:  intervals = [[7,10],[2,4]]
+#   Output: 1
+#   Why:    No overlap — one room suffices.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -47,13 +59,13 @@ def min_meeting_rooms_brute(intervals)
 
   # Greedy assignment: room holds end time of last meeting
   rooms = []
-  intervals.sort_by { |i| i[0] }.each do |start, enden|
+  intervals.sort_by { |i| i[0] }.each do |start, ended|
     # Find a room that is free (ended before this meeting starts)
     freed = rooms.index { |end_time| end_time <= start }
     if freed
-      rooms[freed] = enden
+      rooms[freed] = ended
     else
-      rooms << enden
+      rooms << ended
     end
   end
 

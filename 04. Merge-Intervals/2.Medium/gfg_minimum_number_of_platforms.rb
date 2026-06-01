@@ -6,6 +6,15 @@
 # Given arrival and departure times of trains, find the minimum number of platforms
 # required so that no train waits. This is analogous to Meeting Rooms II.
 #
+# Examples:
+#   Input:  arrivals = [900,940,950,1100,1500,1800], departures = [910,1200,1120,1130,1900,2000]
+#   Output: 3
+#   Why:    At time 950, three trains are present simultaneously -> need 3 platforms.
+#
+#   Input:  arrivals = [900,1100], departures = [1000,1200]
+#   Output: 1
+#   Why:    First departs at 1000 before second arrives at 1100 -> 1 platform suffices.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

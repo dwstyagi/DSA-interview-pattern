@@ -8,6 +8,15 @@
 # Each list of intervals is pairwise disjoint and in sorted order.
 # Return the intersection of these two interval lists.
 #
+# Examples:
+#   Input:  firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]]
+#   Output: [[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]]
+#   Why:    Each pair that overlaps contributes an intersection segment.
+#
+#   Input:  firstList = [[1,3],[5,9]], secondList = []
+#   Output: []
+#   Why:    Empty second list means no intersections possible.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -44,15 +53,30 @@
 
 def interval_intersection_brute(first_list, second_list)
   result = []
-  first_list.each do |a|
-    second_list.each do |b|
-      lo = [a[0], b[0]].max
-      hi = [a[1], b[1]].min
-      result << [lo, hi] if lo <= hi
+
+  # Compare every interval from first_list with every interval from second_list.
+  first_list.each do |first_interval|
+    second_list.each do |second_interval|
+      # Intersection starts at the larger start point.
+      intersection_start = [first_interval[0], second_interval[0]].max
+
+      # Intersection ends at the smaller end point.
+      intersection_end = [first_interval[1], second_interval[1]].min
+
+      # Valid intersection exists only if start <= end.
+      result << [intersection_start, intersection_end] if intersection_start <= intersection_end
     end
   end
+
   result
 end
+
+# Short revision memory:
+
+# - compare every pair
+# - start = max(starts)
+# - end = min(ends)
+# - if start <= end, add intersection
 
 def interval_intersection(first_list, second_list)
   result = []

@@ -8,6 +8,15 @@
 # An arrow shot vertically at x = k bursts any balloon where x_start <= k <= x_end.
 # Return the minimum number of arrows needed to burst all balloons.
 #
+# Examples:
+#   Input:  points = [[10,16],[2,8],[1,6],[7,12]]
+#   Output: 2
+#   Why:    Arrow at x=6 bursts [2,8],[1,6]; arrow at x=11 bursts [10,16],[7,12].
+#
+#   Input:  points = [[1,2],[3,4],[5,6],[7,8]]
+#   Output: 4
+#   Why:    No balloons overlap — each needs its own arrow.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -66,17 +75,18 @@ def find_min_arrow_shots(points)
   return 0 if points.empty?
 
   # Sort balloons by their right end — shoot at the earliest end
-  sorted = points.sort_by { |p| p[1] }
+  sorted_points = points.sort_by { |point| point[1] }
   arrows = 1
-  # Position of the current arrow (at the end of the first balloon)
-  arrow_pos = sorted[0][1]
 
-  sorted[1..].each do |start, _end|
-    if start > arrow_pos
-      # This balloon is not reached by the current arrow; need a new shot
-      arrow_pos = _end
-      arrows += 1
-    end
+  # Position of the current arrow (at the end of the first balloon)
+  arrow_position = sorted_points[0][1]
+
+  sorted_points[1..].each do |start_point, end_point|
+    next unless start_point > arrow_position
+
+    # This balloon is not reached by the current arrow; need a new shot
+    arrow_position = end_point
+    arrows += 1
     # Else: current arrow also bursts this balloon
   end
 

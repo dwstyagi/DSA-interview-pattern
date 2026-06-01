@@ -8,6 +8,15 @@
 # Each range [a, b] in the output should be formatted as "a->b" if a != b,
 # and "a" if a == b.
 #
+# Examples:
+#   Input:  nums = [0,1,2,4,5,7]
+#   Output: ["0->2","4->5","7"]
+#   Why:    0,1,2 are consecutive -> "0->2"; 4,5 -> "4->5"; 7 alone -> "7".
+#
+#   Input:  nums = [0,2,3,4,6,8,9]
+#   Output: ["0","2->4","6","8->9"]
+#   Why:    Each consecutive run is collapsed into a range.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -48,11 +57,13 @@ def summary_ranges_brute(nums)
   i = 0
   while i < nums.length
     start = nums[i]
+
     # Advance while consecutive
     i += 1 while i + 1 < nums.length && nums[i + 1] == nums[i] + 1
     result << (nums[i] == start ? start.to_s : "#{start}->#{nums[i]}")
     i += 1
   end
+
   result
 end
 

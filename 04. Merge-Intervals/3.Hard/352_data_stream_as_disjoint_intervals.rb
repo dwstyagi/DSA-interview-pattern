@@ -6,6 +6,15 @@
 # Given a data stream of integers, return the summary of it as a list of disjoint intervals.
 # Implement SummaryRanges: addNum(val) and getIntervals() methods.
 #
+# Examples:
+#   Input:  add(1), add(3), add(7), add(2), add(6) -> getIntervals each time
+#   Output: [[1,1]],[[1,1],[3,3]],[[1,1],[3,3],[7,7]],[[1,3],[7,7]],[[1,3],[6,7]]
+#   Why:    Adding 2 merges [1,1] and [3,3] into [1,3]; adding 6 merges with [7,7].
+#
+#   Input:  add(5), add(4), add(3) -> getIntervals
+#   Output: [[5,5]],[[4,5]],[[3,5]]
+#   Why:    Each new number extends the existing interval leftward.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

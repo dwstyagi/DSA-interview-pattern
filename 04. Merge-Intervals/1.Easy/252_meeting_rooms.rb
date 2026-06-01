@@ -6,6 +6,15 @@
 # Given an array of meeting time intervals where intervals[i] = [start_i, end_i],
 # determine if a person could attend all meetings (i.e., no two intervals overlap).
 #
+# Examples:
+#   Input:  intervals = [[0,30],[5,10],[15,20]]
+#   Output: false
+#   Why:    [0,30] overlaps with [5,10] — can't attend both.
+#
+#   Input:  intervals = [[7,10],[2,4]]
+#   Output: true
+#   Why:    [2,4] and [7,10] don't overlap — can attend both.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -39,7 +48,7 @@
 # - Empty or single interval -> true
 # - Adjacent but not overlapping -> true (end == next.start is OK)
 
-def can_attend_meetings_brute(intervals)
+def can_attend_meetings_brute?(intervals)
   (0...intervals.length).each do |i|
     ((i + 1)...intervals.length).each do |j|
       a = intervals[i]
@@ -51,23 +60,26 @@ def can_attend_meetings_brute(intervals)
   true
 end
 
-def can_attend_meetings(intervals)
+def can_attend_meetings?(intervals)
   return true if intervals.length <= 1
 
   # Sort by start time — only adjacent intervals can conflict
-  sorted = intervals.sort_by { |i| i[0] }
+  intervals.sort_by!(&:first)
 
-  (1...sorted.length).each do |i|
+  (1...intervals.length).each do |index|
     # If the next meeting starts before the current one ends, overlap
-    return false if sorted[i][0] < sorted[i - 1][1]
+    previous_end = intervals[index - 1][1]
+    current_start = intervals[index][0]
+
+    return false if current_start < previous_end
   end
 
   true
 end
 
 if __FILE__ == $PROGRAM_NAME
-  puts "Brute force: #{can_attend_meetings_brute([[0, 30], [5, 10], [15, 20]])}" # false
-  puts "Optimized:   #{can_attend_meetings([[0, 30], [5, 10], [15, 20]])}"       # false
-  puts "Brute force: #{can_attend_meetings_brute([[7, 10], [2, 4]])}"            # true
-  puts "Optimized:   #{can_attend_meetings([[7, 10], [2, 4]])}"                  # true
+  puts "Brute force: #{can_attend_meetings_brute?([[0, 30], [5, 10], [15, 20]])}" # false
+  puts "Optimized:   #{can_attend_meetings?([[0, 30], [5, 10], [15, 20]])}"       # false
+  puts "Brute force: #{can_attend_meetings_brute?([[7, 10], [2, 4]])}"            # true
+  puts "Optimized:   #{can_attend_meetings?([[7, 10], [2, 4]])}"                  # true
 end

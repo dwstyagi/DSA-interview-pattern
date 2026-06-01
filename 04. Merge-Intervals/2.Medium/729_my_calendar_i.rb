@@ -7,6 +7,15 @@
 # book(startTime, endTime): returns true if the event can be added (no double booking),
 # false otherwise. An event is [start, end) — half-open interval.
 #
+# Examples:
+#   Input:  book(10,20), book(15,25), book(20,30)
+#   Output: true, false, true
+#   Why:    [15,25) overlaps [10,20) -> rejected. [20,30) starts at 20 = end of first, no overlap.
+#
+#   Input:  book(0,10), book(5,15)
+#   Output: true, false
+#   Why:    [5,15) overlaps [0,10) at [5,10) -> rejected.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -42,13 +51,12 @@ class MyCalendarBrute # rubocop:disable Style/Documentation
     @events = []
   end
 
-  def book(start, enden)
-    # Check against every stored event
-    @events.each do |s, e|
-      # Intervals [s,e) and [start,enden) overlap if max(s,start) < min(e,enden)
-      return false if [s, start].max < [e, enden].min
+  def book?(start_time, end_time)
+    @events.each do |existing_start, existing_end|
+      return false if start_time < existing_end && existing_start < end_time
     end
-    @events << [start, enden]
+
+    @events << [start_time, end_time]
     true
   end
 end
@@ -58,40 +66,45 @@ class MyCalendar # rubocop:disable Style/Documentation
     @events = [] # sorted by start time
   end
 
-  def book(start, enden)
-    # Binary search for the insertion position
-    lo = 0
-    hi = @events.length
+  def book?(start_time, end_time)
+    left = 0
+    right = @events.length
 
-    while lo < hi
-      mid = (lo + hi) / 2
-      @events[mid][0] < start ? lo = mid + 1 : hi = mid
+    # Binary search:
+    # Find the first event whose start time is >= start_time.
+    # That index is where the new event should be inserted.
+    while left < right
+      middle = (left + right) / 2
+
+      if @events[middle][0] < start_time
+        left = middle + 1
+      else
+        right = middle
+      end
     end
 
-    # Check the neighbor to the right (lo) for overlap
-    if lo < @events.length && @events[lo][0] < enden
-      return false
-    end
+    # Check the event on the right side of insertion.
+    # Overlap exists if the next event starts before the new event ends.
+    return false if left < @events.length && @events[left][0] < end_time
 
-    # Check the neighbor to the left (lo-1) for overlap
-    if lo > 0 && @events[lo - 1][1] > start
-      return false
-    end
+    # Check the event on the left side of insertion.
+    # Overlap exists if the previous event ends after the new event starts.
+    return false if left.positive? && @events[left - 1][1] > start_time
 
-    # No conflict; insert at position lo
-    @events.insert(lo, [start, enden])
+    # No overlap with neighbors, so insert at the correct sorted position.
+    @events.insert(left, [start_time, end_time])
     true
   end
 end
 
 if __FILE__ == $PROGRAM_NAME
   cal = MyCalendarBrute.new
-  puts "Brute: #{cal.book(10, 20)}" # true
-  puts "Brute: #{cal.book(15, 25)}" # false
-  puts "Brute: #{cal.book(20, 30)}" # true
+  puts "Brute: #{cal.book?(10, 20)}" # true
+  puts "Brute: #{cal.book?(15, 25)}" # false
+  puts "Brute: #{cal.book?(20, 30)}" # true
 
   cal2 = MyCalendar.new
-  puts "Opt: #{cal2.book(10, 20)}" # true
-  puts "Opt: #{cal2.book(15, 25)}" # false
-  puts "Opt: #{cal2.book(20, 30)}" # true
+  puts "Opt: #{cal2.book?(10, 20)}" # true
+  puts "Opt: #{cal2.book?(15, 25)}" # false
+  puts "Opt: #{cal2.book?(20, 30)}" # true
 end

@@ -7,6 +7,15 @@
 # book(startTime, endTime) returns true if the event can be added without causing a
 # triple booking (three overlapping events), false otherwise.
 #
+# Examples:
+#   Input:  book(10,20), book(50,60), book(10,40), book(5,15), book(5,10), book(25,55)
+#   Output: true, true, true, false, true, true
+#   Why:    book(5,15) causes triple-booking at [10,15) with [10,20) and [10,40) -> rejected.
+#
+#   Input:  book(0,10), book(5,15), book(0,5)
+#   Output: true, true, true
+#   Why:    [0,5) is only double-booked max -> accepted.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -43,65 +52,87 @@
 # - Adjacent events      -> not overlapping (half-open)
 # - Identical events x3  -> third returns false
 
-class MyCalendarTwoBrute # rubocop:disable Style/Documentation
+class MyCalendarTwoBruteForce # rubocop:disable Style/Documentation
   def initialize
     @bookings = []
   end
 
-  def book(start, enden)
-    overlaps = []
-    @bookings.each do |s, e|
-      lo = [s, start].max
-      hi = [e, enden].min
-      overlaps << [lo, hi] if lo < hi
-    end
-    # Check if any overlap itself overlaps with another booking
-    overlaps.each do |lo, hi|
-      @bookings.each do |s, e|
-        return false if [s, lo].max < [e, hi].min
+  def book?(start_time, end_time)
+    # Try adding the new booking temporarily.
+    candidate_bookings = @bookings + [[start_time, end_time]]
+
+    # Collect all unique boundary points from all bookings.
+    # These boundaries split the timeline into small segments.
+    boundaries = candidate_bookings
+                 .flat_map { |booking_start, booking_end| [booking_start, booking_end] }
+                 .uniq
+                 .sort
+
+    # Check each segment between consecutive boundary points.
+    # If any segment is covered by 3 or more bookings, reject.
+    (0...(boundaries.length - 1)).each do |index|
+      segment_start = boundaries[index]
+      segment_end = boundaries[index + 1]
+      active_count = 0
+
+      candidate_bookings.each do |booking_start, booking_end|
+        # Overlap with current segment exists if:
+        # booking_start < segment_end && segment_start < booking_end
+        active_count += 1 if booking_start < segment_end && segment_start < booking_end
       end
+
+      return false if active_count >= 3
     end
-    @bookings << [start, enden]
+
+    # No segment reached triple booking, so accept it.
+    @bookings << [start_time, end_time]
     true
   end
 end
 
-class MyCalendarTwo # rubocop:disable Style/Documentation
+class MyCalendarTwo
   def initialize
-    @bookings = []  # all single-booked intervals
-    @overlaps = []  # double-booked regions
+    # All accepted bookings
+    @bookings = []
+
+    # Time segments that are already booked twice
+    @double_booked = []
   end
 
-  def book(start, enden)
-    # New event must not cause triple booking → must not overlap with any double-booked region
-    @overlaps.each do |lo, hi|
-      return false if [lo, start].max < [hi, enden].min
+  def book?(start_time, end_time)
+    # If the new booking overlaps any already double-booked segment,
+    # that would create a triple booking, so reject it.
+    @double_booked.each do |overlap_start, overlap_end|
+      return false if start_time < overlap_end && overlap_start < end_time
     end
 
-    # Add intersections of new event with existing bookings into overlaps
-    @bookings.each do |s, e|
-      lo = [s, start].max
-      hi = [e, enden].min
-      @overlaps << [lo, hi] if lo < hi
+    # Compare the new booking with every existing booking.
+    # Any overlap between them becomes a new double-booked segment.
+    @bookings.each do |existing_start, existing_end|
+      overlap_start = [start_time, existing_start].max
+      overlap_end = [end_time, existing_end].min
+
+      @double_booked << [overlap_start, overlap_end] if overlap_start < overlap_end
     end
 
-    @bookings << [start, enden]
+    # No triple booking found, so accept this booking.
+    @bookings << [start_time, end_time]
     true
   end
 end
 
 if __FILE__ == $PROGRAM_NAME
   cal = MyCalendarTwoBrute.new
-  puts "Brute: #{cal.book(10, 20)}" # true
-  puts "Brute: #{cal.book(50, 60)}" # true
-  puts "Brute: #{cal.book(10, 40)}" # true
-  puts "Brute: #{cal.book(5, 15)}"  # false
-  puts "Brute: #{cal.book(5, 10)}"  # true
-  puts "Brute: #{cal.book(25, 55)}" # true
+  puts "Brute: #{cal.book?(10, 20)}" # true
+  puts "Brute: #{cal.book?(50, 60)}" # true
+  puts "Brute: #{cal.book?(10, 40)}" # true
+  puts "Brute: #{cal.book?(5, 15)}"  # false
+  puts "Brute: #{cal.book?(5, 10)}"  # true
+  puts "Brute: #{cal.book?(25, 55)}" # true
 
   cal2 = MyCalendarTwo.new
-  puts "Opt: #{cal2.book(10, 20)}" # true
-  puts "Opt: #{cal2.book(50, 60)}" # true
-  puts "Opt: #{cal2.book(10, 40)}" # true
-  puts "Opt: #{cal2.book(5, 15)}"  # false
+  puts "Opt: #{cal2.book?(10, 20)}" # true
+  puts "Opt: #{cal2.book?(50, 60)}" # true
+  puts "Opt: #{cal2.book?(10, 40)}" # true
+  puts "Opt: #{cal2.book?(5, 15)}"  # false
 end

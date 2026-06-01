@@ -6,6 +6,15 @@
 # Given an array of intervals where intervals[i] = [start_i, end_i],
 # merge all overlapping intervals and return an array of the non-overlapping intervals.
 #
+# Examples:
+#   Input:  intervals = [[1,3],[2,6],[8,10],[15,18]]
+#   Output: [[1,6],[8,10],[15,18]]
+#   Why:    [1,3] and [2,6] overlap (2<=3) -> merged to [1,6]. Others don't overlap.
+#
+#   Input:  intervals = [[1,4],[4,5]]
+#   Output: [[1,5]]
+#   Why:    [1,4] and [4,5] share endpoint 4 -> merged to [1,5].
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

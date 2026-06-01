@@ -7,6 +7,15 @@
 # Given trips[i] = [numPassengers, from, to], return true if it's possible to pick up
 # and drop off all passengers for all given trips.
 #
+# Examples:
+#   Input:  trips = [[2,1,5],[3,3,7]], capacity = 4
+#   Output: false
+#   Why:    At stop 3, 2+3=5 passengers on board, exceeds capacity 4.
+#
+#   Input:  trips = [[2,1,5],[3,5,7]], capacity = 3
+#   Output: true
+#   Why:    Passengers never overlap — max 3 on board at any time.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -59,19 +68,25 @@ def car_pooling_brute(trips, capacity)
 end
 
 def car_pooling(trips, capacity)
-  # Use difference array: +passengers at from, -passengers at to
-  diff = Hash.new(0)
+  events = []
 
-  trips.each do |num, from, to|
-    diff[from] += num
-    diff[to]   -= num
+  # Convert each trip into:
+  # pickup event  -> +passengers
+  # drop-off event -> -passengers
+  trips.each do |passengers, from_location, to_location|
+    events << [from_location, passengers]
+    events << [to_location, -passengers]
   end
 
-  # Sweep from left to right, check running sum never exceeds capacity
-  running = 0
-  diff.keys.sort.each do |pos|
-    running += diff[pos]
-    return false if running > capacity
+  # Sort by location.
+  # At the same location, drop-offs (-x) happen before pickups (+x).
+  events.sort_by! { |location, change| [location, change] }
+
+  current_passengers = 0
+
+  events.each do |_, change|
+    current_passengers += change
+    return false if current_passengers > capacity
   end
 
   true

@@ -7,6 +7,15 @@
 # where all elements are within the range [lower, upper].
 # Return the shortest sorted list of ranges that cover every missing number in [lower, upper].
 #
+# Examples:
+#   Input:  nums = [0,1,3,50,75], lower = 0, upper = 99
+#   Output: ["2","4->49","51->74","76->99"]
+#   Why:    2 is missing, 4-49 is a gap, 51-74, 76-99 are also gaps.
+#
+#   Input:  nums = [], lower = 1, upper = 1
+#   Output: ["1"]
+#   Why:    No numbers provided, so the entire range [1,1] is missing.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -64,17 +73,17 @@ def missing_ranges(nums, lower, upper)
   result = []
 
   # Helper: format the missing range between lo and hi (inclusive)
-  add_range = ->(lo, hi) {
-    return if lo > hi
+  add_range = lambda do |lo, hi|
+    next if lo > hi
 
     result << (lo == hi ? lo.to_s : "#{lo}->#{hi}")
-  }
+  end
 
   # Gap before the first element
   add_range.call(lower, nums.empty? ? upper : nums[0] - 1)
 
   # Gaps between consecutive elements
-  (0...nums.length - 1).each do |i|
+  (0...(nums.length - 1)).each do |i|
     add_range.call(nums[i] + 1, nums[i + 1] - 1)
   end
 

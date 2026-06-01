@@ -9,6 +9,15 @@
 # If not, the meeting is delayed to the next free room's available time.
 # Return the room number that held the most meetings.
 #
+# Examples:
+#   Input:  n = 2, meetings = [[0,10],[1,5],[2,7],[3,4]]
+#   Output: 0
+#   Why:    Room 0 holds most meetings (3 total) -> return room index 0.
+#
+#   Input:  n = 3, meetings = [[1,20],[2,10],[3,5],[4,9],[6,8]]
+#   Output: 1
+#   Why:    After all meetings, room 1 has been used most times.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -48,66 +57,107 @@
 # - Single meeting, multiple rooms -> room 0
 # - All concurrent, n rooms -> spread evenly
 
-def most_booked_brute(n, meetings)
-  count = Array.new(n, 0)
-  # free_until[i] = time room i becomes available
-  free_until = Array.new(n, 0)
+def most_booked_brute(room_count, meetings)
+  # booking_count[room] = how many meetings were assigned to this room
+  booking_count = Array.new(room_count, 0)
 
-  meetings.sort_by { |m| m[0] }.each do |start, duration|
-    dur = duration - start
+  # free_until[room] = time when this room becomes available again
+  free_until = Array.new(room_count, 0)
 
-    # Find free room with lowest index
-    free_room = (0...n).find { |r| free_until[r] <= start }
+  # Process meetings in sorted order of start time
+  meetings.sort_by { |meeting| meeting[0] }.each do |start_time, end_time|
+    duration = end_time - start_time
+
+    # Try to find a room that is already free at start_time.
+    # Since we scan from left to right, the first free room is the
+    # smallest room number.
+    free_room = (0...room_count).find do |room_number|
+      free_until[room_number] <= start_time
+    end
 
     if free_room
-      free_until[free_room] = start + dur
-      count[free_room] += 1
+      # Assign the meeting immediately to that free room.
+      free_until[free_room] = end_time
+      booking_count[free_room] += 1
     else
-      # All busy: find room that frees earliest (tie: lowest index)
-      earliest_room = (0...n).min_by { |r| [free_until[r], r] }
-      free_until[earliest_room] += dur
-      count[earliest_room] += 1
+      # All rooms are busy.
+      # Pick the room that becomes free the earliest.
+      # If multiple rooms free at the same time, choose smaller room number.
+      earliest_room = (0...room_count).min_by do |room_number|
+        [free_until[room_number], room_number]
+      end
+
+      # Delay the meeting to start when earliest_room becomes free.
+      # The meeting keeps the same duration.
+      free_until[earliest_room] += duration
+      booking_count[earliest_room] += 1
     end
   end
 
-  count.index(count.max)
+  # Return the room with the highest booking count.
+  # If tied, index returns the first one, which is the smaller room number.
+  booking_count.index(booking_count.max)
 end
 
-def most_booked(n, meetings)
-  count = Array.new(n, 0)
-  # available: sorted array of free room indices (min-heap behavior via sort)
-  available = (0...n).to_a
-  # occupied: [end_time, room_number]
-  occupied = []
+require 'algorithms'
 
-  meetings.sort_by { |m| m[0] }.each do |start, finish|
-    dur = finish - start
+def most_booked(room_count, meetings)
+  # Process meetings in increasing order of start time.
+  sorted_meetings = meetings.sort_by { |start_time, _end_time| start_time }
 
-    # Move rooms that have become free to available list
-    while occupied.any? && occupied.min[0] <= start
-      _, room = occupied.min
-      occupied.delete(occupied.min)
-      # Insert in sorted order
-      idx = available.bsearch_index { |r| r >= room } || available.length
-      available.insert(idx, room)
-    end
+  # Min-heap of currently free room numbers.
+  # Always gives the smallest available room number.
+  free_rooms = Containers::MinHeap.new
 
-    if available.any?
-      # Assign to the lowest-numbered free room
-      room = available.shift
-      occupied << [start + dur, room]
-      count[room] += 1
-    else
-      # All rooms busy: assign to the one ending earliest (tie: lowest room number)
-      min_entry = occupied.min_by { |e, r| [e, r] }
-      occupied.delete(min_entry)
-      end_time, room = min_entry
-      occupied << [end_time + dur, room]
-      count[room] += 1
-    end
+  # Min-heap of busy rooms stored as:
+  # [end_time, room_number]
+  # This gives the room that becomes free earliest.
+  # If end times tie, smaller room number wins automatically.
+  busy_rooms = Containers::MinHeap.new
+
+  # booking_count[room] = how many meetings were assigned to this room
+  booking_count = Array.new(room_count, 0)
+
+  # Initially every room is free.
+  (0...room_count).each do |room_number|
+    free_rooms.push(room_number)
   end
 
-  count.index(count.max)
+  sorted_meetings.each do |start_time, end_time|
+    duration = end_time - start_time
+
+    # Release all rooms whose meetings have already ended
+    # by the current meeting's start time.
+    until busy_rooms.empty?
+      earliest_end_time, room_number = busy_rooms.next
+      break if earliest_end_time > start_time
+
+      busy_rooms.pop
+      free_rooms.push(room_number)
+    end
+
+    if free_rooms.empty?
+      # No room is free.
+      # Take the room that becomes available earliest,
+      # delay the meeting there, and keep the same duration.
+      available_time, room_number = busy_rooms.pop
+      delayed_end_time = available_time + duration
+
+      busy_rooms.push([delayed_end_time, room_number])
+    else
+      # At least one room is free.
+      # Use the smallest room number.
+      room_number = free_rooms.pop
+
+      busy_rooms.push([end_time, room_number])
+    end
+
+    booking_count[room_number] += 1
+  end
+
+  # Return the room with the highest booking count.
+  # If tied, choose the smaller room number.
+  booking_count.each_with_index.max_by { |count, room_number| [count, -room_number] }[1]
 end
 
 if __FILE__ == $PROGRAM_NAME

@@ -7,6 +7,15 @@
 # insert the new interval and merge as needed.
 # Return the resulting array of non-overlapping intervals.
 #
+# Examples:
+#   Input:  intervals = [[1,3],[6,9]], newInterval = [2,5]
+#   Output: [[1,5],[6,9]]
+#   Why:    [2,5] overlaps [1,3] -> merge to [1,5]; [6,9] stays.
+#
+#   Input:  intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]
+#   Output: [[1,2],[3,10],[12,16]]
+#   Why:    [4,8] overlaps [3,5],[6,7],[8,10] -> all merged into [3,10].
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -64,7 +73,7 @@ def insert(intervals, new_interval)
   # Phase 1: intervals entirely before new_interval (end < new_interval start)
   result << intervals[i] while i < n && intervals[i][1] < new_interval[0] && (i += 1)
 
-  # Phase 2: intervals that overlap with new_interval (start <= new_interval end)
+  # Phase 2: intervals that overlap with new_interval (interval start <= new_interval end)
   while i < n && intervals[i][0] <= new_interval[1]
     new_interval[0] = [new_interval[0], intervals[i][0]].min
     new_interval[1] = [new_interval[1], intervals[i][1]].max
