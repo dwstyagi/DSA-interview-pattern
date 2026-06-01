@@ -6,6 +6,15 @@
 # Given an array containing values in range 1..N, sort it in O(n) time
 # and O(1) extra space using the cyclic sort technique.
 #
+# Examples:
+#   Input:  nums = [2,3,1,4]
+#   Output: [1,2,3,4]
+#   Why:    Each value in [1..n] placed at index val-1 via cyclic swaps.
+#
+#   Input:  nums = [1,5,2,4,3]
+#   Output: [1,2,3,4,5]
+#   Why:    Cyclic sort corrects all placements in one pass.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -51,12 +60,12 @@ def cyclic_sort(nums)
   while i < nums.length
     correct = nums[i] - 1 # value v belongs at index v-1
 
-    if nums[i] != nums[correct]
-      # Place nums[i] at its correct position
-      nums[i], nums[correct] = nums[correct], nums[i]
-    else
+    if nums[i] == nums[correct]
       # Already in correct position (or duplicate — stops infinite loop)
       i += 1
+    else
+      # Place nums[i] at its correct position
+      nums[i], nums[correct] = nums[correct], nums[i]
     end
   end
 

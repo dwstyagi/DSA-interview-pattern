@@ -6,6 +6,15 @@
 # Given an array nums containing n distinct numbers in the range [0, n],
 # return the only number in the range that is missing from the array.
 #
+# Examples:
+#   Input:  nums = [3,0,1]
+#   Output: 2
+#   Why:    Range [0,3] has 4 values; 2 is the only one absent.
+#
+#   Input:  nums = [0,1]
+#   Output: 2
+#   Why:    Range [0,2]; 0 and 1 are present, so 2 is missing.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -43,7 +52,7 @@
 def missing_number_brute(nums)
   # Sum formula: expected sum - actual sum
   n = nums.length
-  n * (n + 1) / 2 - nums.sum
+  (n * (n + 1) / 2) - nums.sum
 end
 
 def missing_number(nums)

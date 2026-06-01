@@ -7,6 +7,15 @@
 # find both the repeating and missing numbers.
 # (Same as LeetCode 645 Set Mismatch — just GFG naming.)
 #
+# Examples:
+#   Input:  nums = [3,1,2,5,3]
+#   Output: [3,4]
+#   Why:    3 is duplicated (corrupt), 4 is missing from [1..5].
+#
+#   Input:  nums = [2,2]
+#   Output: [2,1]
+#   Why:    2 duplicated, 1 missing.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -51,10 +60,10 @@ def find_corrupt_pair(nums)
   # Cyclic sort: value v at index v-1
   while i < n
     correct = nums[i] - 1
-    if nums[i] != nums[correct]
-      nums[i], nums[correct] = nums[correct], nums[i]
-    else
+    if nums[i] == nums[correct]
       i += 1
+    else
+      nums[i], nums[correct] = nums[correct], nums[i]
     end
   end
 

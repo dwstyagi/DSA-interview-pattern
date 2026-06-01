@@ -7,6 +7,15 @@
 # In one swap, you can swap the positions of any two people.
 # Return the minimum number of swaps so that every couple is sitting side by side.
 #
+# Examples:
+#   Input:  row = [0,2,1,3]
+#   Output: 1
+#   Why:    Swap seats 1 and 2 so couple (0,1) and (2,3) each sit together.
+#
+#   Input:  row = [3,2,0,1]
+#   Output: 0
+#   Why:    (2,3) sit at 0,1 and (0,1) sit at 2,3 — already coupled.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

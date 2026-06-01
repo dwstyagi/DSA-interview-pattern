@@ -6,6 +6,15 @@
 # Given an array of integers and a range [a, b], find the first integer in the range
 # that is missing from the array. If all integers in the range are present, return b+1.
 #
+# Examples:
+#   Input:  nums = [1,4,3,2], lo = 1, hi = 5
+#   Output: 5
+#   Why:    1-4 all present in range [1,5]; 5 is the first missing.
+#
+#   Input:  nums = [2,3,4], lo = 1, hi = 5
+#   Output: 1
+#   Why:    1 is absent — it's the smallest missing value in [1,5].
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

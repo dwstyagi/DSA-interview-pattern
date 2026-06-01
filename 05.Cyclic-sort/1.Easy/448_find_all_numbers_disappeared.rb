@@ -6,6 +6,15 @@
 # Given an array nums of n integers where nums[i] is in the range [1, n],
 # return an array of all the integers in the range [1, n] that do not appear in nums.
 #
+# Examples:
+#   Input:  nums = [4,3,2,7,8,2,3,1]
+#   Output: [5,6]
+#   Why:    After cyclic sort placing each value at index val-1, indices 4 and 5 are wrong -> 5,6 missing.
+#
+#   Input:  nums = [1,1]
+#   Output: [2]
+#   Why:    1 appears twice; 2 never appears in range [1,2].
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -51,10 +60,10 @@ def find_disappeared_numbers(nums)
   # Cyclic sort: place value v at index v-1
   while i < n
     correct = nums[i] - 1 # value v belongs at index v-1
-    if nums[i] != nums[correct]
-      nums[i], nums[correct] = nums[correct], nums[i]
-    else
+    if nums[i] == nums[correct]
       i += 1
+    else
+      nums[i], nums[correct] = nums[correct], nums[i]
     end
   end
 

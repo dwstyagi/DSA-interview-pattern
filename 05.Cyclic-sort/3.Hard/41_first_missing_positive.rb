@@ -6,6 +6,15 @@
 # Given an unsorted integer array nums, return the smallest missing positive integer.
 # Must run in O(n) time and use O(1) extra space.
 #
+# Examples:
+#   Input:  nums = [1,2,0]
+#   Output: 3
+#   Why:    1 and 2 are present; 3 is the first missing positive.
+#
+#   Input:  nums = [3,4,-1,1]
+#   Output: 2
+#   Why:    After cyclic sort ignoring out-of-range values, index 1 doesn't hold 2.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -46,7 +55,7 @@
 # - All negative -> 1
 
 def first_missing_positive_brute(nums)
-  present = nums.select { |n| n > 0 }.to_set
+  present = nums.select { |n| n.positive? && n <= nums.length }.to_set
   1.upto(nums.length + 1) { |i| return i unless present.include?(i) }
 end
 
@@ -58,7 +67,7 @@ def first_missing_positive(nums)
   while i < n
     correct = nums[i] - 1
     # Only sort values in valid range [1, n] and avoid infinite loop on duplicates
-    if nums[i] > 0 && nums[i] <= n && nums[i] != nums[correct]
+    if nums[i].between?(1, n) && nums[i] != nums[correct]
       nums[i], nums[correct] = nums[correct], nums[i]
     else
       i += 1

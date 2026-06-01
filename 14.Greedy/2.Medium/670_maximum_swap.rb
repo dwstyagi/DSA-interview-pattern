@@ -6,6 +6,15 @@
 # You are given an integer num. You can swap two digits at most once to get the maximum valued number.
 # Return the maximum valued number you can get.
 #
+# Examples:
+#   Input:  num = 2736
+#   Output: 7236
+#   Why:    Swap digit 2 with 7 (the largest digit to its right) -> 7236.
+#
+#   Input:  num = 9973
+#   Output: 9973
+#   Why:    Already in descending order — no beneficial swap exists.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

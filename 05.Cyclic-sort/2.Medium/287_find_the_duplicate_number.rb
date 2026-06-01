@@ -7,6 +7,15 @@
 # there is only one repeated number. Return this repeated number.
 # Must use only constant extra space and not modify the array.
 #
+# Examples:
+#   Input:  nums = [1,3,4,2,2]
+#   Output: 2
+#   Why:    2 appears twice; Floyd's cycle detection finds it without modifying the array.
+#
+#   Input:  nums = [3,1,3,4,2]
+#   Output: 3
+#   Why:    3 appears at indices 0 and 2 — the slow/fast pointer cycle lands on 3.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

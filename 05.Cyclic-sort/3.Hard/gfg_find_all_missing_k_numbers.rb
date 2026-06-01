@@ -7,6 +7,15 @@
 # and some may be missing. Find all K missing numbers.
 # (Generalization: return all numbers in [1, n] not present in nums.)
 #
+# Examples:
+#   Input:  nums = [2,3,1,1], k = 3
+#   Output: [4,5,6]
+#   Why:    After placing values in [1..n], indices 3,4,5 are empty -> missing 4,5,6.
+#
+#   Input:  nums = [1,2,3], k = 2
+#   Output: [4,5]
+#   Why:    All of [1..3] present; next 2 missing positives are 4 and 5.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #

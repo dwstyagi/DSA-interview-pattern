@@ -7,6 +7,15 @@
 # and each integer appears once or twice, return an array of all integers that appear twice.
 # Must run in O(n) time using only O(1) extra space.
 #
+# Examples:
+#   Input:  nums = [4,3,2,7,8,2,3,1]
+#   Output: [2,3]
+#   Why:    After cyclic sort, indices where nums[i] != i+1 have duplicates: values 2 and 3.
+#
+#   Input:  nums = [1,1,2]
+#   Output: [1]
+#   Why:    1 occupies index 0 correctly but appears twice — detected at index 1.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -51,10 +60,10 @@ def find_duplicates(nums)
   # Cyclic sort: place value v at index v-1
   while i < n
     correct = nums[i] - 1
-    if nums[i] != nums[correct]
-      nums[i], nums[correct] = nums[correct], nums[i]
-    else
+    if nums[i] == nums[correct]
       i += 1
+    else
+      nums[i], nums[correct] = nums[correct], nums[i]
     end
   end
 

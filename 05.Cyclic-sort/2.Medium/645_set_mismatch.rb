@@ -8,6 +8,15 @@
 # which results in the repetition of one number and the loss of another number.
 # Return [duplicated, missing].
 #
+# Examples:
+#   Input:  nums = [1,2,2,4]
+#   Output: [2,3]
+#   Why:    2 is duplicated; 3 is missing from range [1,4].
+#
+#   Input:  nums = [1,1]
+#   Output: [1,2]
+#   Why:    1 duplicated, 2 missing.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -54,10 +63,10 @@ def find_error_nums(nums)
   # Cyclic sort: value v goes to index v-1
   while i < n
     correct = nums[i] - 1
-    if nums[i] != nums[correct]
-      nums[i], nums[correct] = nums[correct], nums[i]
-    else
+    if nums[i] == nums[correct]
       i += 1
+    else
+      nums[i], nums[correct] = nums[correct], nums[i]
     end
   end
 

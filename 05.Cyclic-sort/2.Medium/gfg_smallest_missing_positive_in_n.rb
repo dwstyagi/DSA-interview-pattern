@@ -7,6 +7,15 @@
 # find the smallest missing positive integer.
 # (This version guarantees values are in [1, N] — simpler than LC 41.)
 #
+# Examples:
+#   Input:  nums = [2,3,4]
+#   Output: 1
+#   Why:    1 is the smallest positive integer not present.
+#
+#   Input:  nums = [1,2,3]
+#   Output: 4
+#   Why:    1,2,3 all present; 4 is next missing positive.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -51,7 +60,7 @@ def find_smallest_missing_in_n(nums)
   # Cyclic sort: value v (in 1..n) goes to index v-1
   while i < n
     correct = nums[i] - 1
-    if nums[i] >= 1 && nums[i] <= n && nums[i] != nums[correct]
+    if nums[i].between?(1, n) && nums[i] != nums[correct]
       nums[i], nums[correct] = nums[correct], nums[i]
     else
       i += 1
