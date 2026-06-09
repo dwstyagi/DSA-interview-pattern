@@ -1,11 +1,20 @@
 # frozen_string_literal: true
-
+#
 # LeetCode 973: K Closest Points to Origin
 #
 # Problem:
 # Given an array of points where points[i] = [xi, yi] and an integer k,
 # return the k closest points to the origin (0, 0). Distance is Euclidean.
 # The answer can be in any order.
+#
+# Examples:
+#   Input:  points = [[1,3],[-2,2]], k = 1
+#   Output: [[-2,2]]
+#   Why:    Distances: sqrt(10) vs sqrt(8) — [-2,2] is closer to origin.
+#
+#   Input:  points = [[3,3],[5,-1],[-2,4]], k = 2
+#   Output: [[3,3],[-2,4]]
+#   Why:    Distances: 18, 26, 20 — two smallest are 18 and 20.
 #
 # -----------------------------------------------------------------------------
 # Interview Flow
@@ -40,24 +49,24 @@
 # - All same distance → any k can be returned
 
 def k_closest_brute(points, k)
-  points.sort_by { |x, y| x * x + y * y }.first(k)
+  points.sort_by { |x, y| (x * x) + (y * y) }.first(k)
 end
 
+require 'algorithms'
 def k_closest(points, k)
-  # simulate max-heap of size k using sorted array descending by distance²
-  heap = []   # [dist², point], sorted ascending → last element is max
+  heap = Containers::MaxHeap.new { |a, b| a <=> b }
 
   points.each do |point|
     x, y = point
-    dist_sq = x * x + y * y
+    dist_sq = (x * x) + (y * y)
 
-    idx = heap.bsearch_index { |d, _| d >= dist_sq } || heap.size
-    heap.insert(idx, [dist_sq, point])
-
-    heap.pop if heap.size > k   # remove the farthest (last element in asc sort)
+    heap.push([dist_sq, point])
+    heap.pop if heap.size > k
   end
 
-  heap.map { |_, p| p }
+  result = []
+  result << heap.pop[1] while heap.size.positive?
+  result
 end
 
 if __FILE__ == $PROGRAM_NAME

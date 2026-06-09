@@ -7,6 +7,15 @@
 # starting with w capital, maximize your final capital by doing at most k
 # projects. You can only start a project if current capital >= its requirement.
 #
+# Examples:
+#   Input:  k=2, w=0, profits=[1,2,3], capital=[0,1,1]
+#   Output: 4
+#   Why:    Start w=0: take project 0 (profit=1)->w=1. Now take project 2 (profit=3)->w=4.
+#
+#   Input:  k=3, w=0, profits=[1,2,3], capital=[0,1,2]
+#   Output: 6
+#   Why:    Take all 3 projects sequentially: 0->1->3->6.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -41,6 +50,8 @@
 # - k=0 → return w unchanged
 # - All capital requirements > w and no profitable projects unlock → unchanged
 
+require 'algorithms'
+
 def find_maximized_capital_brute(k, w, profits, capital)
   available = profits.zip(capital)   # [[profit, cap], ...]
 
@@ -63,26 +74,20 @@ def find_maximized_capital_brute(k, w, profits, capital)
 end
 
 def find_maximized_capital(k, w, profits, capital)
-  # sort projects by capital requirement ascending
-  projects = profits.zip(capital).sort_by { |_, cap| cap }
+  min_heap = Containers::MinHeap.new  # keyed by [cap, profit] — unlocks projects as capital grows
+  max_heap = Containers::MaxHeap.new  # keyed by profit — picks best available each turn
 
-  # max-heap on profit (simulate descending sorted array, last = max)
-  profit_heap = []
-  idx = 0
+  profits.zip(capital).each { |profit, cap| min_heap.push([cap, profit]) }
 
   k.times do
-    # unlock all affordable projects into profit max-heap
-    while idx < projects.size && projects[idx][1] <= w
-      profit = projects[idx][0]
-      # insert into ascending array (last = max)
-      pos = profit_heap.bsearch_index { |v| v >= profit } || profit_heap.size
-      profit_heap.insert(pos, profit)
-      idx += 1
+    while !min_heap.empty? && min_heap.next[0] <= w
+      _, profit = min_heap.pop
+      max_heap.push(profit)
     end
 
-    break if profit_heap.empty?   # no affordable projects
+    break if max_heap.empty?
 
-    w += profit_heap.pop          # pick max profit (last in ascending array)
+    w += max_heap.pop
   end
 
   w

@@ -7,6 +7,15 @@
 # to maximize performance = sum(speeds) * min(efficiency). Return the result
 # mod 10^9 + 7.
 #
+# Examples:
+#   Input:  n=6, speed=[2,10,3,1,5,8], efficiency=[5,4,3,9,7,2], k=2
+#   Output: 60
+#   Why:    Pick engineers 2(speed=10,eff=4) and 5(speed=5,eff=7): perf=min(7,4)*(10+5)=60.
+#
+#   Input:  n=6, speed=[2,10,3,1,5,8], efficiency=[5,4,3,9,7,2], k=3
+#   Output: 68
+#   Why:    Best team of 3 gives performance 68 using engineers with highest efficiency combo.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -40,7 +49,7 @@
 # - k=1 → max(speed[i] * efficiency[i]) for all i
 # - k=n → all engineers in team
 
-MOD = 10**9 + 7
+MOD = (10**9) + 7
 
 def max_performance_brute(n, speed, efficiency, k)
   engineers = speed.zip(efficiency)

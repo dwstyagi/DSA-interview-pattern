@@ -9,6 +9,15 @@
 # the larger loses the smaller's weight. Return the weight of the last stone,
 # or 0 if none remain.
 #
+# Examples:
+#   Input:  stones = [2,7,4,1,8,1]
+#   Output: 1
+#   Why:    Smash 8+7=1 left, then 4+2=2, then 2+1=1. One stone remains.
+#
+#   Input:  stones = [1]
+#   Output: 1
+#   Why:    Only one stone — nothing to smash, return it as-is.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -42,31 +51,65 @@
 # - Single stone -> return that stone
 # - Two equal stones -> return 0
 
-def last_stone_weight_brute(stones)
-  arr = stones.dup
-  while arr.size > 1
-    arr.sort!                    # sort ascending each round
-    y = arr.pop                  # heaviest
-    x = arr.pop                  # second heaviest
-    arr << (y - x) if y != x    # push remainder if not equal
+# -----------------------------
+# BRUTE FORCE
+# -----------------------------
+# Idea:
+# - Repeatedly sort the array
+# - Take the two largest stones
+# - Smash them
+# - Put back the difference if non-zero
+# - Continue until at most one stone remains
+#
+# Time: O(n^2 log n) in repeated sorting style
+# Space: O(1) extra beyond array operations
+def last_stone_weight_true_brute_force(stones)
+  stones = stones.dup
+
+  while stones.length > 1
+    # Sort so the two heaviest stones are at the end
+    stones.sort!
+
+    heaviest = stones.pop
+    second_heaviest = stones.pop
+
+    # If they are different, push the remaining weight back
+    stones << (heaviest - second_heaviest) if heaviest != second_heaviest
   end
-  arr.empty? ? 0 : arr[0]
+
+  stones.empty? ? 0 : stones[0]
 end
 
+# -----------------------------
+# OPTIMIZED MAX-HEAP SOLUTION
+# -----------------------------
+# Idea:
+# - Use a max heap so the largest stone is always available quickly
+# - Pop the two heaviest stones
+# - If different, push back the difference
+# - Continue until heap size is 0 or 1
+#
+# Time: O(n log n)
+# Space: O(n)
+require 'algorithms'
 def last_stone_weight(stones)
-  # Simulate max-heap with sorted array (sort once, insert in order)
-  arr = stones.sort              # ascending; treat last element as max
-  while arr.size > 1
-    y = arr.pop                  # heaviest
-    x = arr.pop                  # second heaviest
-    if y != x
-      diff = y - x
-      # binary insert to maintain sorted order
-      idx = arr.bsearch_index { |v| v >= diff } || arr.size
-      arr.insert(idx, diff)
-    end
+  max_heap = Containers::MaxHeap.new
+
+  # Build max heap with all stones
+  stones.each do |stone|
+    max_heap.push(stone)
   end
-  arr.empty? ? 0 : arr[0]
+
+  # Keep smashing while at least two stones remain
+  while max_heap.size > 1
+    heaviest = max_heap.pop
+    second_heaviest = max_heap.pop
+
+    # Push back the remaining weight if non-zero
+    max_heap.push(heaviest - second_heaviest) if heaviest != second_heaviest
+  end
+
+  max_heap.empty? ? 0 : max_heap.pop
 end
 
 if __FILE__ == $PROGRAM_NAME

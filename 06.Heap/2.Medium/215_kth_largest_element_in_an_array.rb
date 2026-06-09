@@ -7,6 +7,15 @@
 # in the array. Note: it is the kth largest in sorted order, not the kth
 # distinct element.
 #
+# Examples:
+#   Input:  nums = [3,2,1,5,6,4], k = 2
+#   Output: 5
+#   Why:    Sorted descending: [6,5,4,3,2,1]; 2nd largest is 5.
+#
+#   Input:  nums = [3,2,3,1,2,4,5,5,6], k = 4
+#   Output: 4
+#   Why:    4th largest is 4 — min-heap of size k; top after all inserts = 4.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -42,21 +51,40 @@
 # - k = n → return min
 # - All elements same → return that value
 
-def find_kth_largest_brute(nums, k)
-  nums.sort.reverse[k - 1]   # sort descending, take index k-1
+# -----------------------------
+# BRUTE FORCE
+# -----------------------------
+# Idea:
+# - Sort the numbers in descending order
+# - The k-th largest element will be at index k - 1
+#
+# Time: O(n log n)
+# Space: depends on sort implementation
+def find_kth_largest_true_brute_force(nums, k)
+  nums.sort.reverse[k - 1]
 end
 
+# -----------------------------
+# OPTIMIZED MIN-HEAP SOLUTION
+# -----------------------------
+# Idea:
+# - Keep a min heap of size k
+# - It stores the largest k elements seen so far
+# - If heap grows beyond k, remove the smallest
+# - Then heap top is the k-th largest element
+#
+# Time: O(n log k)
+# Space: O(k)
+require 'algorithms'
 def find_kth_largest(nums, k)
-  heap = []   # simulate min-heap with sorted ascending array
+  min_heap = Containers::MinHeap.new
 
-  nums.each do |n|
-    # binary-search insert to maintain sorted order
-    idx = heap.bsearch_index { |v| v >= n } || heap.size
-    heap.insert(idx, n)
-    heap.shift if heap.size > k   # evict minimum when over capacity
+  nums.each do |num|
+    min_heap.push(num)
+    min_heap.pop if min_heap.size > k
   end
 
-  heap.first   # root of min-heap = kth largest
+  min_heap.next
 end
 
 if __FILE__ == $PROGRAM_NAME

@@ -3,74 +3,176 @@
 # LeetCode 378: Kth Smallest Element in a Sorted Matrix
 #
 # Problem:
-# Given an n x n matrix where each row and column is sorted in ascending order,
-# return the kth smallest element in the matrix.
+# Given an n x n matrix where each row and each column is sorted in ascending
+# order, return the kth smallest element in the matrix.
+#
+# Important:
+# - Duplicates count separately.
+# - It is not asking for kth distinct value.
+#
+# Example:
+#   Input:
+#   matrix = [
+#     [1,  5,  9],
+#     [10, 11, 13],
+#     [12, 13, 15]
+#   ]
+#   k = 8
+#
+#   Output: 13
+#
+#   Why:
+#   Sorted values:
+#   [1, 5, 9, 10, 11, 12, 13, 13, 15]
+#   The 8th smallest value is 13.
 #
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
-# 1. True Brute Force
-#    Flatten the matrix, sort, return element at index k-1.
-#    Time Complexity: O(n² log n²) = O(n² log n)
-#    Space Complexity: O(n²)
+# 1. Brute Force
+#    Flatten matrix into one array, sort it, return nums[k - 1].
+#    Time Complexity: O(n^2 log(n^2))
+#    Space Complexity: O(n^2)
 #
 # 2. Bottleneck
-#    Ignores sorted structure; sorting all n² elements is wasteful.
+#    We sort every value, but we only need the kth smallest value.
 #
-# 3. Optimized Accepted Approach
-#    Min-heap: push first element of each row with its row/col indices.
-#    Pop k times: each pop yields the next smallest; push next element in
-#    that row. The kth pop is the answer.
-#    Time Complexity: O(k log n)
-#    Space Complexity: O(n) for heap
+# 3. Optimized Min-Heap Approach
+#    Treat every matrix row as a sorted list.
+#    Push the first value of each useful row into MinHeap.
+#    Pop the smallest value k times.
+#    Whenever we pop from a row, push the next value from the same row.
+#    Time Complexity: O(k log min(n, k))
+#    Space Complexity: O(min(n, k))
 #
 # -----------------------------------------------------------------------------
 # Dry Run
 #
-# matrix = [[1,5,9],[10,11,13],[12,13,15]], k=8
-# Heap init: [(1,0,0),(10,1,0),(12,2,0)]
-# Pop 1 → push (5,0,1); heap [(5,0,1),(10,1,0),(12,2,0)]
-# Pop 5 → push (9,0,2); heap [(9,0,2),(10,1,0),(12,2,0)]
-# Pop 9 → no more in row 0; heap [(10,1,0),(12,2,0)]
-# Pop 10 → push (11,1,1); heap [(11,1,1),(12,2,0)]
-# Pop 11 → push (13,1,2); heap [(12,2,0),(13,1,2)]
-# Pop 12 → push (13,2,1); heap [(13,1,2),(13,2,1)]
-# Pop 13 → 7th smallest; push (15,2,2); heap [(13,2,1),(15,2,2)]
-# Pop 13 → 8th smallest = answer = 13
+# matrix = [
+#   [1,  5,  9],
+#   [10, 11, 13],
+#   [12, 13, 15]
+# ]
+# k = 8
+#
+# Treat rows as sorted lists:
+#
+# Row 0: 1  -> 5  -> 9
+# Row 1: 10 -> 11 -> 13
+# Row 2: 12 -> 13 -> 15
+#
+# Initial heap:
+# [1,  0, 0]
+# [10, 1, 0]
+# [12, 2, 0]
+#
+# Pop 1  -> push 5
+# Pop 5  -> push 9
+# Pop 9  -> row 0 finished
+# Pop 10 -> push 11
+# Pop 11 -> push 13
+# Pop 12 -> push 13
+# Pop 13 -> row 1 finished
+# Pop 13 -> kth pop, answer = 13
 #
 # Edge Cases:
-# - 1x1 matrix → return matrix[0][0]
-# - k=1 → return matrix[0][0] (top-left is always minimum)
+# - matrix has one element
+# - k = 1
+# - k = n * n
+# - duplicate values
+# - negative values
 
-def kth_smallest_brute(matrix, k)
-  matrix.flatten.sort[k - 1]
-end
+require 'algorithms'
 
-def kth_smallest(matrix, k)
-  n = matrix.length
-  # min-heap: [value, row, col]
-  heap = (0...n).map { |r| [matrix[r][0], r, 0] }.sort
+# -----------------------------
+# BRUTE FORCE
+# -----------------------------
+# Idea:
+# - Put every matrix value into one array
+# - Sort that array
+# - Return value at index k - 1
+#
+# Time: O(n^2 log(n^2))
+# Space: O(n^2)
+def kth_smallest_brute_force(matrix, k)
+  nums = []
 
-  result = nil
-  k.times do
-    val, r, c = heap.shift   # pop minimum
-
-    result = val
-
-    if c + 1 < n
-      new_entry = [matrix[r][c + 1], r, c + 1]
-      idx = heap.bsearch_index { |v| v[0] >= new_entry[0] } || heap.size
-      heap.insert(idx, new_entry)
+  matrix.each do |row|
+    row.each do |num|
+      nums << num
     end
   end
 
-  result
+  nums.sort[k - 1]
+end
+
+# -----------------------------
+# OPTIMIZED MIN-HEAP SOLUTION
+# -----------------------------
+# Idea:
+# - Treat each row as a sorted list
+# - Push first value of each row into MinHeap
+# - Pop smallest value
+# - After popping from a row, push next value from same row
+# - The kth popped value is the answer
+#
+# Time: O(k log min(n, k))
+# Space: O(min(n, k))
+def kth_smallest(matrix, k)
+  min_heap = Containers::MinHeap.new
+
+  row_count = matrix.length
+  col_count = matrix[0].length
+
+  # Add first value from each useful row.
+  #
+  # We only need at most k rows because we only pop k values.
+  [row_count, k].min.times do |row|
+    value = matrix[row][0]
+
+    # Store:
+    # [value, row, col]
+    #
+    # col is 0 because every row starts from first column.
+    min_heap.push([value, row, 0])
+  end
+
+  answer = nil
+
+  # Pop exactly k times.
+  #
+  # Each pop gives the next smallest value.
+  k.times do
+    value, row, col = min_heap.pop
+    answer = value
+
+    # Move to next column in the same row.
+    next_col = col + 1
+
+    # If row has no more columns, do not push anything.
+    next unless next_col < col_count
+
+    next_value = matrix[row][next_col]
+    min_heap.push([next_value, row, next_col])
+  end
+
+  answer
 end
 
 if __FILE__ == $PROGRAM_NAME
-  matrix = [[1, 5, 9], [10, 11, 13], [12, 13, 15]]
-  puts "Brute: #{kth_smallest_brute(matrix, 8)}"  # 13
-  puts "Opt:   #{kth_smallest(matrix, 8)}"        # 13
-  puts "Brute: #{kth_smallest_brute([[-5]], 1)}"  # -5
-  puts "Opt:   #{kth_smallest([[-5]], 1)}"        # -5
+  matrix = [
+    [1,  5,  9],
+    [10, 11, 13],
+    [12, 13, 15]
+  ]
+  k = 8
+
+  puts "Brute: #{kth_smallest_brute_force(matrix, k)}"
+  puts "Opt:   #{kth_smallest(matrix, k)}"
+
+  matrix = [[-5]]
+  k = 1
+
+  puts "Brute: #{kth_smallest_brute_force(matrix, k)}"
+  puts "Opt:   #{kth_smallest(matrix, k)}"
 end

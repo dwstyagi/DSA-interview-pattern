@@ -4,64 +4,148 @@
 #
 # Problem:
 # Given a sorted integer array arr, two integers k and x, return the k closest
-# integers to x in the array. The result should also be sorted in ascending order.
-# Ties broken by smaller element.
+# integers to x in the array.
+#
+# The result must be sorted in ascending order.
+#
+# Tie Rule:
+# If two numbers have the same distance from x, choose the smaller number.
+#
+# Examples:
+#   Input:  arr = [1, 2, 3, 4, 5], k = 4, x = 3
+#   Output: [1, 2, 3, 4]
+#   Why:    1 and 5 both have distance 2 from 3, but 1 is smaller.
+#
+#   Input:  arr = [1, 2, 3, 4, 5], k = 4, x = -1
+#   Output: [1, 2, 3, 4]
+#   Why:    x is smaller than all elements, so the first 4 are closest.
 #
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
-# 1. True Brute Force
-#    Sort all elements by distance to x (ties broken by value), take first k,
-#    then sort result ascending.
+# 1. Brute Force
+#    Sort all elements by distance from x.
+#    If distances tie, smaller value comes first.
+#    Take first k elements and sort them ascending for final answer.
 #    Time Complexity: O(n log n)
 #    Space Complexity: O(n)
 #
 # 2. Bottleneck
-#    We don't need to sort all elements — the array is already sorted.
+#    Sorting all n elements is unnecessary when we only need k elements.
 #
-# 3. Optimized Accepted Approach
-#    Binary search to find the window of k elements.
-#    Binary search on left pointer: if arr[mid+k] - x < x - arr[mid], slide right.
-#    Window [left, left+k) is the answer.
-#    Time Complexity: O(log(n-k) + k)
-#    Space Complexity: O(1)
+# 3. Optimized Max-Heap Approach
+#    Keep a MaxHeap of size k.
+#    Heap stores [distance, value].
+#    If heap grows beyond k, pop the farthest value.
+#    If distance ties, larger value is worse and gets removed first.
+#    Time Complexity: O(n log k + k log k)
+#    Space Complexity: O(k)
 #
 # -----------------------------------------------------------------------------
 # Dry Run
 #
-# arr = [1,2,3,4,5], k=4, x=3
-# BS: l=0, r=1 (n-k=1)
-# mid=0: arr[0+4]-3 = 5-3=2, 3-arr[0]=3-1=2 → equal → move r=0
-# l=r=0 → window [0,4) = [1,2,3,4]
+# arr = [1, 2, 3, 4, 5]
+# k = 4
+# x = 3
+#
+# Push [distance, value]:
+#
+# 1 -> [2, 1]
+# 2 -> [1, 2]
+# 3 -> [0, 3]
+# 4 -> [1, 4]
+# 5 -> [2, 5]
+#
+# Heap size becomes 5, so pop the largest pair.
+#
+# [2, 5] is popped.
+#
+# Why not [2, 1]?
+# Both 1 and 5 have distance 2.
+# Larger value 5 is worse because tie rule prefers smaller value.
+#
+# Remaining values:
+# [1, 2, 3, 4]
+#
+# Final answer:
+# [1, 2, 3, 4]
 #
 # Edge Cases:
-# - x smaller than all elements → return first k
-# - x larger than all elements → return last k
+# - k = 1
+# - k = arr.length
+# - x smaller than all elements
+# - x larger than all elements
+# - duplicate values
 
-def find_closest_elements_brute(arr, k, x)
-  arr.sort_by { |v| [(v - x).abs, v] }.first(k).sort
+# -----------------------------
+# BRUTE FORCE
+# -----------------------------
+# Idea:
+# - Sort every number by closeness to x
+# - Tie-break by smaller number
+# - Take first k
+# - Sort result ascending
+#
+# Time: O(n log n)
+# Space: O(n)
+def find_closest_elements_brute_force(arr, k, x)
+  arr
+    .sort_by { |num| [(num - x).abs, num] }
+    .first(k)
+    .sort
 end
 
+# -----------------------------
+# OPTIMIZED MAX-HEAP SOLUTION
+# -----------------------------
+# Idea:
+# - Keep only k closest elements in a MaxHeap
+# - Heap stores [distance, num]
+# - The top of MaxHeap is the worst among current k elements
+# - If heap size becomes greater than k, remove that worst element
+#
+# Time: O(n log k + k log k)
+# Space: O(k)
+require 'algorithms'
 def find_closest_elements(arr, k, x)
-  l = 0
-  r = arr.length - k   # left boundary of the k-window can range [0, n-k]
+  max_heap = Containers::MaxHeap.new
 
-  while l < r
-    mid = (l + r) / 2
-    # compare distances of the two ends of the candidate window
-    if x - arr[mid] > arr[mid + k] - x
-      l = mid + 1   # right end is closer, slide window right
-    else
-      r = mid       # left end is closer or equal, keep or shrink right
-    end
+  arr.each do |num|
+    distance = (num - x).abs
+
+    # Store distance first because closeness is the main comparison.
+    #
+    # For ties:
+    # [2, 5] is greater than [2, 1],
+    # so 5 gets removed before 1.
+    max_heap.push([distance, num])
+
+    max_heap.pop if max_heap.size > k
   end
 
-  arr[l, k]   # slice k elements starting at left pointer
+  result = []
+
+  until max_heap.empty?
+    _distance, num = max_heap.pop
+    result << num
+  end
+
+  # LeetCode requires answer in ascending order.
+  result.sort
 end
 
 if __FILE__ == $PROGRAM_NAME
-  puts "Brute: #{find_closest_elements_brute([1, 2, 3, 4, 5], 4, 3).inspect}"  # [1,2,3,4]
-  puts "Opt:   #{find_closest_elements([1, 2, 3, 4, 5], 4, 3).inspect}"        # [1,2,3,4]
-  puts "Brute: #{find_closest_elements_brute([1, 2, 3, 4, 5], 4, -1).inspect}" # [1,2,3,4]
-  puts "Opt:   #{find_closest_elements([1, 2, 3, 4, 5], 4, -1).inspect}"       # [1,2,3,4]
+  arr = [1, 2, 3, 4, 5]
+  k = 4
+  x = 3
+
+  puts "Brute: #{find_closest_elements_brute_force(arr, k, x)}"
+  puts "Opt:   #{find_closest_elements(arr, k, x)}"
+
+  arr = [1, 2, 3, 4, 5]
+  k = 4
+  x = -1
+
+  puts "Brute: #{find_closest_elements_brute_force(arr, k, x)}"
+  puts "Opt:   #{find_closest_elements(arr, k, x)}"
 end

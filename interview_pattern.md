@@ -1,6 +1,6 @@
 # Interview Problem-Solving Pattern
 
-Use this with the reusable write-up template in [problem_solution_template.md](./problem_solution_template.md).
+Use this for LeetCode problems with the reusable write-up template in [problem_solution_template.md](./problem_solution_template.md).
 
 ## The Steps
 

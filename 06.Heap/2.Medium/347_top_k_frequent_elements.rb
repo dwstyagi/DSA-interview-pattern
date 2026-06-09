@@ -4,64 +4,149 @@
 #
 # Problem:
 # Given an integer array nums and an integer k, return the k most frequent
-# elements. You may return the answer in any order.
+# elements. The answer can be returned in any order.
+#
+# Examples:
+#   Input:  nums = [1,1,1,2,2,3], k = 2
+#   Output: [1,2]
+#   Why:    1 appears 3 times, 2 appears 2 times, 3 appears 1 time.
+#
+#   Input:  nums = [1], k = 1
+#   Output: [1]
+#   Why:    Only one number exists.
 #
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
-# 1. True Brute Force
-#    Count frequencies with a hash, sort by frequency descending, return first k.
+# 1. Brute Force
+#    Count frequency of each number, sort all numbers by frequency descending,
+#    and return the first k numbers.
 #    Time Complexity: O(n log n)
 #    Space Complexity: O(n)
 #
 # 2. Bottleneck
-#    Sorting all unique elements when we only need the top k is wasteful.
+#    Sorting all unique numbers is expensive when we only need top k frequent
+#    elements.
 #
-# 3. Optimized Accepted Approach
-#    Count frequencies, then use a min-heap of size k keyed on frequency.
-#    If heap size exceeds k, pop the minimum-frequency element.
-#    The remaining k elements are the most frequent.
+# 3. Optimized Min-Heap Approach
+#    Maintain a min-heap of size k.
+#    Heap stores [frequency, number].
+#    If heap size becomes greater than k, remove the smallest frequency.
+#    At the end, heap contains the k most frequent numbers.
 #    Time Complexity: O(n log k)
-#    Space Complexity: O(n) for frequency map + O(k) for heap
+#    Space Complexity: O(n + k)
 #
 # -----------------------------------------------------------------------------
 # Dry Run
 #
 # nums = [1, 1, 1, 2, 2, 3], k = 2
-# freq = {1 => 3, 2 => 2, 3 => 1}
-# Process (1,3): heap = [[3,1]]
-# Process (2,2): heap = [[2,2],[3,1]] → sort by freq
-# Process (3,1): heap = [[1,3],[2,2],[3,1]] size=3 > k=2 → pop min_freq(1,3)
-# heap = [[2,2],[3,1]] → elements = [1, 2] → answer = [1, 2]
+#
+# Frequency map:
+# 1 => 3
+# 2 => 2
+# 3 => 1
+#
+# Process [3, 1]:
+# heap = [[3, 1]]
+#
+# Process [2, 2]:
+# heap = [[2, 2], [3, 1]]
+#
+# Process [1, 3]:
+# heap size becomes 3 > k
+# pop smallest frequency [1, 3]
+# heap = [[2, 2], [3, 1]]
+#
+# Final heap contains:
+# [2, 2] means number 2 appears 2 times
+# [3, 1] means number 1 appears 3 times
+#
+# Answer = [2, 1]
+# Order does not matter, so [1, 2] is also correct.
 #
 # Edge Cases:
-# - k = n → return all elements
-# - All elements same → return [that element]
+# - nums has one element
+# - k = 1
+# - k equals number of unique elements
+# - multiple numbers have same frequency
+# - negative numbers are allowed
 
-def top_k_frequent_brute(nums, k)
-  freq = nums.tally
-  freq.sort_by { |_, count| -count }.first(k).map(&:first)
-end
+# -----------------------------
+# BRUTE FORCE
+# -----------------------------
+# Idea:
+# - Count frequency of every number
+# - Sort numbers by frequency in descending order
+# - Return the first k numbers
+#
+# Time: O(n log n)
+# Space: O(n)
+def top_k_frequent_brute_force(nums, k)
+  frequency = Hash.new(0)
 
-def top_k_frequent(nums, k)
-  freq = nums.tally   # {element => count}
-
-  # simulate min-heap of size k, sorted ascending by frequency
-  heap = []
-
-  freq.each do |num, count|
-    # insert [count, num] maintaining sorted order by count
-    idx = heap.bsearch_index { |v| v[0] >= count } || heap.size
-    heap.insert(idx, [count, num])
-    heap.shift if heap.size > k   # evict element with lowest frequency
+  nums.each do |num|
+    frequency[num] += 1
   end
 
-  heap.map { |_, num| num }   # extract just the numbers
+  sorted_by_frequency = frequency.sort_by do |_num, count|
+    -count
+  end
+
+  top_k_pairs = sorted_by_frequency.first(k)
+
+  top_k_pairs.map do |num, _count|
+    num
+  end
+end
+
+# -----------------------------
+# OPTIMIZED MIN-HEAP SOLUTION
+# -----------------------------
+# Idea:
+# - Count frequency of every number
+# - Keep a min-heap of size k
+# - Heap stores [count, num]
+# - Smallest count stays at the top of the heap
+# - If heap size becomes greater than k, remove smallest count
+# - Remaining k numbers are the top k frequent numbers
+#
+# Time: O(n log k)
+# Space: O(n + k)
+require 'algorithms'
+def top_k_frequent(nums, k)
+  frequency = Hash.new(0)
+
+  nums.each do |num|
+    frequency[num] += 1
+  end
+
+  min_heap = Containers::MinHeap.new
+
+  frequency.each do |num, count|
+    min_heap.push([count, num])
+    min_heap.pop if min_heap.size > k
+  end
+
+  result = []
+
+  until min_heap.empty?
+    _count, num = min_heap.pop
+    result << num
+  end
+
+  result
 end
 
 if __FILE__ == $PROGRAM_NAME
-  puts "Brute: #{top_k_frequent_brute([1, 1, 1, 2, 2, 3], 2).inspect}"  # [1, 2]
-  puts "Opt:   #{top_k_frequent([1, 1, 1, 2, 2, 3], 2).inspect}"        # [1, 2]
-  puts "Brute: #{top_k_frequent_brute([1], 1).inspect}"                  # [1]
-  puts "Opt:   #{top_k_frequent([1], 1).inspect}"                        # [1]
+  nums = [1, 1, 1, 2, 2, 3]
+  k = 2
+
+  puts "Brute: #{top_k_frequent_brute_force(nums, k)}"
+  puts "Opt:   #{top_k_frequent(nums, k)}"
+
+  nums = [1]
+  k = 1
+
+  puts "Brute: #{top_k_frequent_brute_force(nums, k)}"
+  puts "Opt:   #{top_k_frequent(nums, k)}"
 end

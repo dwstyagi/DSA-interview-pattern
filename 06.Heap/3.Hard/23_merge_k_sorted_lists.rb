@@ -3,101 +3,82 @@
 # LeetCode 23: Merge k Sorted Lists
 #
 # Problem:
-# Given an array of k linked lists, each sorted in ascending order,
-# merge all lists into one sorted linked list and return its head.
+# Given an array of k linked lists, each sorted in ascending order, merge all
+# the lists into one sorted linked list and return its head.
+#
+# The merged list must also be sorted in ascending order.
 #
 # Examples:
 #   Input:  lists = [[1,4,5],[1,3,4],[2,6]]
 #   Output: [1,1,2,3,4,4,5,6]
-#   Why:    Divide and conquer: merge pairs until one list remains.
-#           Round1: [1,1,3,4,4,5]+[2,6], Round2: [1,1,2,3,4,4,5,6].
+#   Why:    Merge all three sorted lists into one sorted list.
 #
 #   Input:  lists = []
 #   Output: []
-#   Why:    No lists to merge — return nil/empty.
+#   Why:    No lists to merge, so return nil / empty.
 #
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
-# 1. True Brute Force
-#    Collect all values from all lists into an array.
+# 1. Brute Force
+#    Collect all values from all lists into one array.
 #    Sort the array.
-#    Rebuild a single linked list from the sorted array.
-#
-#    Time Complexity: O(n log n) where n = total nodes
+#    Rebuild a new linked list from the sorted values.
+#    Time Complexity: O(n log n)
 #    Space Complexity: O(n)
 #
 # 2. Bottleneck
-#    Sorting ignores the fact that each list is already sorted — wasted info.
-#    Better: use divide and conquer — merge pairs of lists repeatedly.
-#    This is O(n log k) since we do log k rounds and each round touches n nodes.
+#    Sorting every value ignores the fact that each list is already sorted.
+#    We only need the smallest current head from each list at any time.
 #
-# 3. Optimized Accepted Approach
-#    Divide and conquer pairwise merge:
-#    - Repeatedly merge pairs of lists until only one remains
-#    - Each merge of two sorted lists is O(a + b)
-#    - log k rounds, each round O(n) total work -> O(n log k)
-#
-#    Helper: merge two sorted linked lists (standard merge step)
-#
+# 3. Optimized Min-Heap Approach
+#    Keep a MinHeap of the current head node from each non-empty list.
+#    Pop the smallest node, append it to the result, and push its next node.
+#    Repeat until the heap is empty.
 #    Time Complexity: O(n log k)
-#    Space Complexity: O(log k) recursion stack for divide and conquer
+#    Space Complexity: O(k)
 #
 # -----------------------------------------------------------------------------
 # Dry Run
 #
 # lists = [[1->4->5], [1->3->4], [2->6]]
 #
-# Round 1 (merge pairs):
-#   merge([1->4->5], [1->3->4]) = 1->1->3->4->4->5
-#   merge([2->6], nil)          = 2->6
-#   lists = [[1->1->3->4->4->5], [2->6]]
+# Initial heap: [1(list0), 1(list1), 2(list2)]
+# Pop 1(list0) -> push 4(list0)
+# Pop 1(list1) -> push 3(list1)
+# Pop 2(list2) -> push 6(list2)
+# Pop 3(list1) -> push 4(list1)
+# Continue until heap is empty.
 #
-# Round 2 (merge pairs):
-#   merge([1->1->3->4->4->5], [2->6]) = 1->1->2->3->4->4->5->6
-#   lists = [[1->1->2->3->4->4->5->6]]
-#
-# return 1->1->2->3->4->4->5->6 ✓
+# Final answer:
+# 1->1->2->3->4->4->5->6
 #
 # Edge Cases:
-# - Empty lists array -> return nil
-# - Some lists are nil -> skip them
-# - k=1 -> return the single list as-is
+# - Empty lists array
+# - Some lists are nil
+# - k = 1
+# - Duplicate values across lists
 
-# singly linked list node
 class ListNode
   attr_accessor :val, :next
 
-  def initialize(val)
+  def initialize(val = 0, nxt = nil)
     @val = val
-    @next = nil
+    @next = nxt
   end
 end
 
-# helper: merge two sorted linked lists into one sorted list
-def merge_two_lists(list1, list2)
-  dummy = ListNode.new(0)
-  current = dummy
-
-  while list1 && list2
-    if list1.val <= list2.val
-      current.next = list1
-      list1 = list1.next
-    else
-      current.next = list2
-      list2 = list2.next
-    end
-
-    current = current.next
-  end
-
-  current.next = list1 || list2
-
-  dummy.next
-end
-
-# brute force: collect all values, sort, rebuild
-def merge_k_lists_brute(lists)
+# -----------------------------
+# BRUTE FORCE
+# -----------------------------
+# Idea:
+# - Collect every value from every list
+# - Sort all values
+# - Rebuild a new linked list from the sorted values
+#
+# Time: O(n log n)
+# Space: O(n)
+def merge_k_lists_brute_force(lists)
   values = []
 
   lists.each do |head|
@@ -108,52 +89,89 @@ def merge_k_lists_brute(lists)
     end
   end
 
-  values.sort!
+  dummy = ListNode.new
+  tail = dummy
 
-  dummy = ListNode.new(0)
-  current = dummy
-  values.each do |val|
-    current.next = ListNode.new(val)
-    current = current.next
+  values.sort.each do |value|
+    tail.next = ListNode.new(value)
+    tail = tail.next
   end
 
   dummy.next
 end
 
-# optimized: divide and conquer pairwise merging
+# -----------------------------
+# OPTIMIZED MIN-HEAP SOLUTION
+# -----------------------------
+# Idea:
+# - Keep only the current smallest candidate from each list in a MinHeap
+# - Heap stores [value, order, node]
+# - `order` is a tie-breaker so nodes with equal values stay comparable
+# - Pop the smallest node, append it to the result, and push its next node
+#
+# Time: O(n log k)
+# Space: O(k)
+require 'algorithms'
 def merge_k_lists(lists)
-  return nil if lists.empty?
+  min_heap = Containers::MinHeap.new
+  order = 0
 
-  # repeatedly merge pairs until one list remains
-  while lists.length > 1
-    merged = []
+  lists.each do |head|
+    next unless head
 
-    # merge pairs: (0,1), (2,3), (4,5), ...
-    lists.each_slice(2) do |pair|
-      merged << merge_two_lists(pair[0], pair[1]) # pair[1] may be nil if odd count
-    end
-
-    lists = merged # replace with merged results for next round
+    min_heap.push([head.val, order, head])
+    order += 1
   end
 
-  lists.first
+  dummy = ListNode.new
+  tail = dummy
+
+  until min_heap.empty?
+    _value, _id, node = min_heap.pop
+    next_node = node.next
+
+    node.next = nil
+    tail.next = node
+    tail = node
+
+    next unless next_node
+
+    min_heap.push([next_node.val, order, next_node])
+    order += 1
+  end
+
+  dummy.next
 end
 
 if __FILE__ == $PROGRAM_NAME
-  # build three sorted lists: [1->4->5], [1->3->4], [2->6]
-  def build_list(vals)
-    nodes = vals.map { |v| ListNode.new(v) }
-    nodes.each_cons(2) { |a, b| a.next = b }
-    nodes.first
+  def build_list(values)
+    dummy = ListNode.new
+    tail = dummy
+
+    values.each do |value|
+      tail.next = ListNode.new(value)
+      tail = tail.next
+    end
+
+    dummy.next
   end
 
   lists = [build_list([1, 4, 5]), build_list([1, 3, 4]), build_list([2, 6])]
 
-  result = merge_k_lists(lists)
-  output = []
-  while result
-    output << result.val
-    result = result.next
+  brute_head = merge_k_lists_brute_force(lists)
+  brute_output = []
+  while brute_head
+    brute_output << brute_head.val
+    brute_head = brute_head.next
   end
-  puts "Result: #{output}"
+
+  opt_head = merge_k_lists(lists)
+  opt_output = []
+  while opt_head
+    opt_output << opt_head.val
+    opt_head = opt_head.next
+  end
+
+  puts "Brute: #{brute_output.inspect}"
+  puts "Opt:   #{opt_output.inspect}"
 end

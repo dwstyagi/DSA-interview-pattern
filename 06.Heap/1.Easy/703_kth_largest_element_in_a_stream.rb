@@ -7,6 +7,15 @@
 # KthLargest(k, nums) initializes with k and an initial list.
 # add(val) appends val to the stream and returns the kth largest element.
 #
+# Examples:
+#   Input:  k=3, nums=[4,5,8,2], add(3),add(5),add(10),add(9),add(4)
+#   Output: 4,5,5,8,8
+#   Why:    Min-heap of size k tracks the k largest; heap top is always kth largest.
+#
+#   Input:  k=1, nums=[1,2], add(3)
+#   Output: 3
+#   Why:    k=1 means largest element; after adding 3, heap top = 3.
+#
 # -----------------------------------------------------------------------------
 # Interview Flow
 #
@@ -38,38 +47,80 @@
 # Edge Cases:
 # - k=1 → return max element each time
 # - nums empty at init → first k adds build the heap
+# -----------------------------
 
-class KthLargestBrute
+# -----------------------------
+# BRUTE FORCE
+# -----------------------------
+# Idea:
+# - Keep every number in an array
+# - On each add(val):
+#   1. append val
+#   2. sort the whole array in descending order
+#   3. return the k-th largest element
+#
+# Time per add: O(n log n)
+# Space: O(n)
+class KthLargestBruteForce
   def initialize(k, nums)
     @k = k
-    @data = nums.dup
+    @numbers = nums.dup
   end
 
   def add(val)
-    @data << val
-    @data.sort[-@k]   # return kth largest via sort
+    # Add the new value into the stream
+    @numbers << val
+
+    # Sort descending so largest elements come first
+    sorted_numbers = @numbers.sort.reverse
+
+    # k-th largest is at index k - 1
+    sorted_numbers[@k - 1]
   end
 end
 
+# -----------------------------
+# OPTIMIZED MIN-HEAP SOLUTION
+# -----------------------------
+# Idea:
+# - Maintain a min heap containing only the largest k elements seen so far
+# - If heap size grows beyond k, remove the smallest element
+# - Then the heap root is the k-th largest element
+#
+# Why min heap?
+# - among the top k elements, the smallest one is exactly the k-th largest
+#
+# Time per add: O(log k)
+# Space: O(k)
+require 'algorithms'
 class KthLargest
   def initialize(k, nums)
-    @k = k
-    @heap = []              # min-heap simulated with sorted array
+    @size = k
+    @min_heap = Containers::MinHeap.new
 
-    nums.each { |n| add(n) }
+    # Build the heap using initial numbers
+    nums.each do |num|
+      @min_heap.push(num)
+      @min_heap.pop if @min_heap.size > @size
+    end
   end
 
   def add(val)
-    # Insert into sorted array maintaining ascending order
-    idx = @heap.bsearch_index { |v| v >= val } || @heap.size
-    @heap.insert(idx, val)
-    @heap.shift if @heap.size > @k  # pop minimum (front of sorted array)
-    @heap.first                      # root of min-heap = kth largest
+    # Add new value into heap
+    @min_heap.push(val)
+
+    # If heap has more than k elements,
+    # remove the smallest one
+    # so only the largest k elements remain
+    @min_heap.pop if @min_heap.size > @size
+
+    # Root of min heap is the k-th largest element
+    @min_heap.next
   end
 end
 
 if __FILE__ == $PROGRAM_NAME
-  brute = KthLargestBrute.new(3, [4, 5, 8, 2])
+  brute = KthLargestBruteForce.new(3, [4, 5, 8, 2])
   puts "Brute: #{brute.add(3)}"   # 4
   puts "Brute: #{brute.add(5)}"   # 5
   puts "Brute: #{brute.add(10)}"  # 5
