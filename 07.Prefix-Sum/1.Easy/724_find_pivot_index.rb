@@ -41,7 +41,7 @@
 
 def pivot_index_brute(nums)
   nums.each_index do |i|
-    return i if nums[0...i].sum == nums[i + 1..].sum
+    return i if nums[0...i].sum == nums[(i + 1)...].sum
   end
   -1
 end
@@ -51,8 +51,10 @@ def pivot_index(nums)
   left_sum = 0
 
   nums.each_with_index do |n, i|
-    right_sum = total - left_sum - n   # right = total minus left and self
+    right_sum = total - left_sum - n # right = total minus left and self
+
     return i if left_sum == right_sum
+
     left_sum += n
   end
 

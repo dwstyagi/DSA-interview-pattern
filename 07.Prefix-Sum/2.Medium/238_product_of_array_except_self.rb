@@ -43,7 +43,7 @@
 
 def product_except_self_brute(nums)
   n = nums.length
-  Array.new(n) { |i| (nums[0...i] + nums[i + 1..]).reduce(1, :*) }
+  Array.new(n) { |i| (nums[0...i] + nums[(i + 1)...]).reduce(1, :*) }
 end
 
 def product_except_self(nums)

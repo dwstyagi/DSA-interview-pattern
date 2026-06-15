@@ -2,72 +2,225 @@
 
 # LeetCode 560: Subarray Sum Equals K
 #
-# Problem:
-# Given an integer array nums and an integer k, return the total number of
-# subarrays whose sum equals k.
+# Problem
+# -------
+# Given an integer array nums and an integer k,
+# return the total number of continuous subarrays
+# whose sum equals k.
+#
+# Example:
+# nums = [1, 1, 1]
+# k = 2
+#
+# Valid subarrays:
+# [1,1] (index 0..1)
+# [1,1] (index 1..2)
+#
+# Answer = 2
 #
 # -----------------------------------------------------------------------------
-# Interview Flow
+# Key Observation
+# -----------------------------------------------------------------------------
 #
-# 1. True Brute Force
-#    Check every pair (i, j), compute subarray sum nums[i..j], count matches.
-#    Time Complexity: O(n²) or O(n³) with naive sum
-#    Space Complexity: O(1)
+# Let:
 #
-# 2. Bottleneck
-#    Recomputing subarray sums from scratch.
+# prefix[i] = sum of nums[0..i]
 #
-# 3. Optimized Accepted Approach
-#    Running prefix sum + hash map. For each index i with running sum S,
-#    any previous index j where prefix[j] = S - k forms a valid subarray [j+1..i].
-#    Track count of each prefix sum seen so far.
-#    Time Complexity: O(n)
-#    Space Complexity: O(n)
+# Then:
+#
+# subarray_sum(left..right)
+# = prefix[right] - prefix[left - 1]
+#
+# We want:
+#
+# prefix[right] - prefix[left - 1] = k
+#
+# Rearranging:
+#
+# prefix[left - 1] = prefix[right] - k
+#
+# So while processing the current prefix sum:
+#
+# running = prefix[right]
+#
+# we only need to know:
+#
+# "How many times have we previously seen
+#  running - k ?"
+#
+# Every occurrence forms a valid subarray ending here.
 #
 # -----------------------------------------------------------------------------
-# Dry Run
+# Why freq = { 0 => 1 } ?
+# -----------------------------------------------------------------------------
 #
-# nums = [1, 1, 1], k = 2
-# freq = {0 => 1}; running = 0
-# i=0: running=1, look for 1-2=-1 → 0 matches; freq={0:1,1:1}
-# i=1: running=2, look for 2-2=0 → 1 match; freq={0:1,1:1,2:1}; count=1
-# i=2: running=3, look for 3-2=1 → 1 match; freq={0:1,1:1,2:1,3:1}; count=2
-# Return 2
+# Before processing any element, we've already seen
+# one prefix sum equal to 0.
 #
-# Edge Cases:
-# - k=0 → count subarrays summing to 0 (including empty? no, prefix[0]=0 counts)
-# - Negative numbers allowed
+# Think of it as a virtual prefix at index -1.
+#
+# Example:
+#
+# nums = [1, 2]
+# k = 3
+#
+# running = 3
+# running - k = 0
+#
+# We need one occurrence of prefix sum 0 so that
+# the subarray [1,2] starting at index 0 gets counted.
+#
+# -----------------------------------------------------------------------------
+# Brute Force
+# -----------------------------------------------------------------------------
+#
+# Check every possible subarray.
+#
+# Time:  O(n²)
+# Space: O(1)
+#
 
 def subarray_sum_brute(nums, k)
   count = 0
-  n = nums.length
-  (0...n).each do |i|
+
+  (0...nums.length).each do |start|
     sum = 0
-    (i...n).each do |j|
-      sum += nums[j]
+
+    (start...nums.length).each do |ending|
+      sum += nums[ending]
+
       count += 1 if sum == k
     end
   end
+
   count
 end
 
+# -----------------------------------------------------------------------------
+# Optimal: Prefix Sum + Frequency Hash
+# -----------------------------------------------------------------------------
+#
+# Hash stores:
+#
+# prefix_sum => number of times seen
+#
+# Example:
+#
+# freq = {
+#   0 => 1,
+#   1 => 2,
+#   3 => 1
+# }
+#
+# means:
+#
+# prefix sum 0 has appeared once
+# prefix sum 1 has appeared twice
+# prefix sum 3 has appeared once
+#
+# Time:  O(n)
+# Space: O(n)
+#
+
 def subarray_sum(nums, k)
   count = 0
-  running = 0
-  freq = { 0 => 1 }   # prefix sum 0 seen once (empty prefix)
 
-  nums.each do |n|
-    running += n
-    count += (freq[running - k] || 0)   # subarrays ending here with sum k
+  # Running prefix sum
+  running = 0
+
+  # Prefix sum frequency map
+  #
+  # 0 => 1 represents the empty prefix
+  freq = { 0 => 1 }
+
+  nums.each do |num|
+    # Current prefix sum
+    running += num
+
+    # We need:
+    #
+    # previous_prefix = running - k
+    #
+    # Every previous occurrence creates
+    # one valid subarray ending here.
+    count += freq[running - k] || 0
+
+    # Record current prefix sum for future elements
     freq[running] = (freq[running] || 0) + 1
   end
 
   count
 end
 
+# -----------------------------------------------------------------------------
+# Dry Run
+# -----------------------------------------------------------------------------
+#
+# nums = [1, 1, 1]
+# k = 2
+#
+# Start:
+#
+# running = 0
+# count = 0
+# freq = { 0 => 1 }
+#
+# --------------------------------------------------
+# num = 1
+#
+# running = 1
+#
+# need running - k = -1
+#
+# freq[-1] = nil
+#
+# count = 0
+#
+# freq becomes:
+# {
+#   0 => 1,
+#   1 => 1
+# }
+#
+# --------------------------------------------------
+# num = 1
+#
+# running = 2
+#
+# need running - k = 0
+#
+# freq[0] = 1
+#
+# count += 1
+#
+# count = 1
+#
+# freq becomes:
+# {
+#   0 => 1,
+#   1 => 1,
+#   2 => 1
+# }
+#
+# --------------------------------------------------
+# num = 1
+#
+# running = 3
+#
+# need running - k = 1
+#
+# freq[1] = 1
+#
+# count += 1
+#
+# count = 2
+#
+# Answer = 2
+#
+# -----------------------------------------------------------------------------
+
 if __FILE__ == $PROGRAM_NAME
-  puts "Brute: #{subarray_sum_brute([1, 1, 1], 2)}"    # 2
-  puts "Opt:   #{subarray_sum([1, 1, 1], 2)}"          # 2
-  puts "Brute: #{subarray_sum_brute([1, 2, 3], 3)}"    # 2
-  puts "Opt:   #{subarray_sum([1, 2, 3], 3)}"          # 2
+  puts subarray_sum([1, 1, 1], 2)     # 2
+  puts subarray_sum([1, 2, 3], 3)     # 2
+  puts subarray_sum([1, -1, 0], 0)    # 3
 end

@@ -112,13 +112,13 @@ end
 | 10 | Corporate Flight Bookings | [1109](https://leetcode.com/problems/corporate-flight-bookings/) | Diff array | range update |
 | 11 | Maximum Size Subarray Sum Equals K | [325](https://leetcode.com/problems/maximum-size-subarray-sum-equals-k/) | Hash prefix | longest window |
 | 12 | Binary Subarrays With Sum | [930](https://leetcode.com/problems/binary-subarrays-with-sum/) | Hash prefix | count |
-| 13 | Number of Submatrices That Sum to Target | [1074](https://leetcode.com/problems/number-of-submatrices-that-sum-to-target/) | 2D + hash | compress rows |
-| 14 | Minimum Value to Get Positive Prefix Sum | [1413](https://leetcode.com/problems/minimum-value-to-get-positive-step-by-step-sum/) | Running min | start = 1 - min |
+| 13 | Minimum Value to Get Positive Prefix Sum | [1413](https://leetcode.com/problems/minimum-value-to-get-positive-step-by-step-sum/) | Running min | start = 1 - min |
 
 ### Hard
 
 | # | Problem | LC | Variant | Track |
 |---|---------|-----|---------|-------|
+| 14 | Number of Submatrices That Sum to Target | [1074](https://leetcode.com/problems/number-of-submatrices-that-sum-to-target/) | 2D + hash | compress rows |
 | 15 | Maximum Sum of 3 Non-Overlapping Subarrays | [689](https://leetcode.com/problems/maximum-sum-of-3-non-overlapping-subarrays/) | Prefix sums + DP | left/right best |
 | 16 | Range Sum Query — Mutable (BIT) | [307](https://leetcode.com/problems/range-sum-query-mutable/) | Fenwick tree | update + query |
 | 17 | Count of Range Sum | [327](https://leetcode.com/problems/count-of-range-sum/) | Prefix + merge sort | order stat |

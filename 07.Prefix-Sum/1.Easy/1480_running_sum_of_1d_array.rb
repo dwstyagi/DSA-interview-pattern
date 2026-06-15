@@ -41,7 +41,7 @@ end
 
 def running_sum(nums)
   total = 0
-  nums.map { |n| total += n }   # accumulate and map in one pass
+  nums.map { |n| total += n } # accumulate and map in one pass
 end
 
 if __FILE__ == $PROGRAM_NAME

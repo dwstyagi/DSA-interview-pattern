@@ -54,7 +54,7 @@ def max_sub_array_len_brute(nums, k)
 end
 
 def max_sub_array_len(nums, k)
-  first_seen = { 0 => -1 }   # running_sum → earliest index
+  first_seen = { 0 => -1 } # running_sum → earliest index
   running = 0
   max_len = 0
 

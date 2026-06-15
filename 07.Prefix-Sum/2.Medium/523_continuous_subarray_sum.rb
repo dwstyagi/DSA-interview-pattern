@@ -39,27 +39,27 @@
 
 def check_subarray_sum_brute(nums, k)
   n = nums.length
-  (0...n - 1).each do |i|
+  (0...(n - 1)).each do |i|
     sum = nums[i]
-    (i + 1...n).each do |j|
+    ((i + 1)...n).each do |j|
       sum += nums[j]
-      return true if k != 0 && sum % k == 0
-      return true if k == 0 && sum == 0
+      return true if k != 0 && (sum % k).zero?
+      return true if k.zero? && sum.zero?
     end
   end
   false
 end
 
 def check_subarray_sum(nums, k)
-  first_seen = { 0 => -1 }   # remainder → earliest index
+  first_seen = { 0 => -1 } # remainder → earliest index
   running = 0
 
   nums.each_with_index do |n, i|
     running += n
-    rem = k != 0 ? running % k : running
+    rem = k.zero? ? running : running % k
 
     if first_seen.key?(rem)
-      return true if i - first_seen[rem] >= 2   # subarray length >= 2
+      return true if i - first_seen[rem] >= 2 # subarray length >= 2
     else
       first_seen[rem] = i
     end

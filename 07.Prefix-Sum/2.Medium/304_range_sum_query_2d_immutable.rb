@@ -66,14 +66,20 @@ class NumMatrix2D
 
   def sum_region(row1, col1, row2, col2)
     @prefix[row2 + 1][col2 + 1] -
-      @prefix[row1][col2 + 1] -
-      @prefix[row2 + 1][col1] +
-      @prefix[row1][col1]
+      @prefix[row1][col2 + 1] -   # exclude upper rectangle
+      @prefix[row2 + 1][col1] +   # exclude left rectangle
+      @prefix[row1][col1]         # add back top-left rectangle (excluded twice)
   end
 end
 
 if __FILE__ == $PROGRAM_NAME
-  mat = [[3, 0, 1, 4, 2], [5, 6, 3, 2, 1], [1, 2, 0, 1, 5], [4, 1, 0, 1, 7], [1, 0, 3, 0, 5]]
+  mat = [
+    [3, 0, 1, 4, 2],
+    [5, 6, 3, 2, 1],
+    [1, 2, 0, 1, 5],
+    [4, 1, 0, 1, 7],
+    [1, 0, 3, 0, 5]
+  ]
   brute = NumMatrix2DBrute.new(mat)
   opt   = NumMatrix2D.new(mat)
   puts "Brute: #{brute.sum_region(2, 1, 4, 3)}"  # 8

@@ -75,7 +75,7 @@ def num_submatrix_sum_target(matrix, target)
 
       col_sums.each do |v|
         running += v
-        count += (freq[running - target] || 0)
+        count += freq[running - target] || 0
         freq[running] = (freq[running] || 0) + 1
       end
     end

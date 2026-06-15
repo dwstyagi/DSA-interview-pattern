@@ -2,68 +2,91 @@
 
 # LeetCode 974: Subarray Sums Divisible by K
 #
-# Problem:
-# Given an integer array nums and an integer k, return the number of
-# non-empty subarrays that have a sum divisible by k.
+# ------------------------------------------------------------
+# Pattern
+# Prefix Sum + Hash Map (Frequency Counting)
 #
-# -----------------------------------------------------------------------------
-# Interview Flow
+# Core Observation:
 #
-# 1. True Brute Force
-#    Check every subarray, test if sum % k == 0.
-#    Time Complexity: O(n²)
-#    Space Complexity: O(1)
+# Let:
+#   prefix[i] = sum(nums[0..i])
 #
-# 2. Bottleneck
-#    O(n²) pairs.
+# A subarray (i+1..j) is divisible by k if:
 #
-# 3. Optimized Accepted Approach
-#    Prefix sum mod k + frequency map. If two prefix sums have the same
-#    remainder, their difference (subarray sum) is divisible by k.
-#    Count pairs of same-remainder prefix sums.
-#    Time Complexity: O(n)
-#    Space Complexity: O(k)
+#   (prefix[j] - prefix[i]) % k == 0
 #
-# -----------------------------------------------------------------------------
-# Dry Run
+# Rearranging:
 #
-# nums = [4, 5, 0, -2, -3, 1], k = 5
-# freq = {0 => 1}; running = 0; count = 0
-# i=0: run=4, rem=4; freq[4]=1
-# i=1: run=9, rem=4; freq[4]=1 → count+=1=1; freq[4]=2
-# i=2: run=9, rem=4; freq[4]=2 → count+=2=3; freq[4]=3
-# i=3: run=7, rem=2; freq[2]=1
-# i=4: run=4, rem=4; freq[4]=3 → count+=3=6; freq[4]=4
-# i=5: run=5, rem=0; freq[0]=1 → count+=1=7
-# Return 7
+#   prefix[j] % k == prefix[i] % k
 #
-# Edge Cases:
-# - All elements divisible by k → all subarrays count
-# - Negative numbers require ((rem % k) + k) % k to handle negative mods
-
-def subarrays_div_by_k_brute(nums, k)
-  count = 0
-  n = nums.length
-  (0...n).each do |i|
-    sum = 0
-    (i...n).each do |j|
-      sum += nums[j]
-      count += 1 if sum % k == 0
-    end
-  end
-  count
-end
+# Therefore:
+# Every time we see a remainder that we've seen before,
+# each previous occurrence creates one valid subarray.
+#
+# ------------------------------------------------------------
+# Example
+#
+# nums = [4,5,0,-2,-3,1]
+# k = 5
+#
+# Prefix sums:
+#   4   -> rem 4
+#   9   -> rem 4
+#   9   -> rem 4
+#   7   -> rem 2
+#   4   -> rem 4
+#   5   -> rem 0
+#
+# Remainder frequencies:
+#
+# rem 0 => 2 occurrences
+# rem 4 => 4 occurrences
+# rem 2 => 1 occurrence
+#
+# Number of valid pairs:
+#
+# rem 0 -> C(2,2) = 1
+# rem 4 -> C(4,2) = 6
+#
+# Total = 7
+#
+# ------------------------------------------------------------
+# Hash Map Meaning
+#
+# freq[rem]
+#   = how many previous prefix sums had this remainder
+#
+# When current remainder = rem:
+#
+#   count += freq[rem]
+#
+# because each previous matching remainder forms a
+# subarray whose sum is divisible by k.
+#
+# ------------------------------------------------------------
+# Complexity
+#
+# Time:  O(n)
+# Space: O(k)
+#
+# ------------------------------------------------------------
 
 def subarrays_div_by_k(nums, k)
-  freq = { 0 => 1 }   # remainder → count of prefix sums with that remainder
-  running = 0
+  freq = { 0 => 1 } # empty prefix has remainder 0
+
+  running_sum = 0
   count = 0
 
-  nums.each do |n|
-    running += n
-    rem = ((running % k) + k) % k   # handle negative mod
+  nums.each do |num|
+    running_sum += num
 
-    count += (freq[rem] || 0)        # each matching prefix sum creates a valid subarray
+    # Normalize negative remainders
+    rem = ((running_sum % k) + k) % k
+
+    # Every previous matching remainder creates
+    # one valid subarray ending at current index.
+    count += freq[rem] || 0
+
     freq[rem] = (freq[rem] || 0) + 1
   end
 
@@ -71,8 +94,6 @@ def subarrays_div_by_k(nums, k)
 end
 
 if __FILE__ == $PROGRAM_NAME
-  puts "Brute: #{subarrays_div_by_k_brute([4, 5, 0, -2, -3, 1], 5)}"  # 7
-  puts "Opt:   #{subarrays_div_by_k([4, 5, 0, -2, -3, 1], 5)}"        # 7
-  puts "Brute: #{subarrays_div_by_k_brute([5], 9)}"                    # 0
-  puts "Opt:   #{subarrays_div_by_k([5], 9)}"                          # 0
+  p subarrays_div_by_k([4, 5, 0, -2, -3, 1], 5) # 7
+  p subarrays_div_by_k([5], 9) # 0
 end

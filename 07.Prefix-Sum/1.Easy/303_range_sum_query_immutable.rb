@@ -42,18 +42,18 @@ class NumArrayBrute
   end
 
   def sum_range(left, right)
-    @nums[left..right].sum   # O(n) each call
+    @nums[left..right].sum # O(n) each call
   end
 end
 
 class NumArray
   def initialize(nums)
-    @prefix = [0]
-    nums.each { |n| @prefix << @prefix[-1] + n }   # build prefix sums
+    @prefix = Array.new(nums.length + 1, 0)
+    nums.each_with_index { |num, i| @prefix[i + 1] = @prefix[i] + num }
   end
 
   def sum_range(left, right)
-    @prefix[right + 1] - @prefix[left]   # O(1) range query
+    @prefix[right + 1] - @prefix[left] # O(1) range query
   end
 end
 
