@@ -97,8 +97,8 @@ def count_smaller(nums)
 end
 
 if __FILE__ == $PROGRAM_NAME
-  puts "Brute: #{count_smaller_brute([5, 2, 6, 1]).inspect}"  # [2, 1, 1, 0]
-  puts "Opt:   #{count_smaller([5, 2, 6, 1]).inspect}"         # [2, 1, 1, 0]
-  puts "Brute: #{count_smaller_brute([2, 0, 1]).inspect}"      # [2, 0, 0]
+  puts "Brute: #{count_smaller_brute([5, 2, 6, 1]).inspect}"    # [2, 1, 1, 0]
+  puts "Opt:   #{count_smaller([5, 2, 6, 1]).inspect}"          # [2, 1, 1, 0]
+  puts "Brute: #{count_smaller_brute([2, 0, 1]).inspect}"       # [2, 0, 0]
   puts "Opt:   #{count_smaller([2, 0, 1]).inspect}"             # [2, 0, 0]
 end

@@ -1,73 +1,296 @@
 # frozen_string_literal: true
 
-# LeetCode 74: Search a 2D Matrix
+# ============================================================
+# LeetCode 74. Search a 2D Matrix
+# ============================================================
 #
-# Problem:
-# Given an m x n matrix where each row is sorted and the first integer of each
-# row is greater than the last integer of the previous row, search for target.
-# Return true if found.
+# 1. Problem Statement
 #
-# -----------------------------------------------------------------------------
-# Interview Flow
+# Given an m x n integer matrix with the following properties:
 #
-# 1. True Brute Force
-#    Linear scan all cells.
-#    Time Complexity: O(m*n)
-#    Space Complexity: O(1)
+# 1. Each row is sorted in non-decreasing order.
+# 2. The first integer of each row is greater than the last
+#    integer of the previous row.
 #
-# 2. Bottleneck
-#    O(m*n) ignores sorted structure.
+# Determine whether a target value exists in the matrix.
 #
-# 3. Optimized Accepted Approach
-#    Treat matrix as a flat sorted array of m*n elements.
-#    Binary search with flat index i: row = i/n, col = i%n.
-#    Time Complexity: O(log(m*n))
-#    Space Complexity: O(1)
+# Return true if the target is found, otherwise false.
 #
-# -----------------------------------------------------------------------------
-# Dry Run
+# ============================================================
+# 2. Brute Force Approach
+# ============================================================
 #
-# matrix=[[1,3,5,7],[10,11,16,20],[23,30,34,60]], target=3
-# m=3,n=4, total=12
-# l=0,r=11: mid=5, flat[5]=11 > 3 → r=4
-# l=0,r=4: mid=2, flat[2]=5 > 3 → r=1
-# l=0,r=1: mid=0, flat[0]=1 < 3 → l=1
-# l=r=1, flat[1]=3==3 → true ✓
+# Intuition
+# ---------
+# The simplest approach is to check every element one by one.
 #
-# Edge Cases:
-# - Target less than first element → false
-# - Target greater than last element → false
+# Since we are only asked whether the target exists, we can
+# traverse the entire matrix and return true as soon as we
+# find the target.
+#
+# Algorithm
+# ---------
+# 1. Iterate through every row.
+# 2. Iterate through every element in the row.
+# 3. If the current element equals target, return true.
+# 4. If traversal completes, return false.
+#
+# Time Complexity:
+# O(m * n)
+#
+# Space Complexity:
+# O(1)
+#
+# ============================================================
+# 3. Brute Force Code
+# ============================================================
+#
+def search_matrix_brute_force?(matrix, target)
+  matrix.each do |row|
+    row.each do |num|
+      return true if num == target
+    end
+  end
 
-def search_matrix_brute(matrix, target)
-  matrix.any? { |row| row.include?(target) }
+  false
 end
+#
+# ============================================================
+# 4. Bottleneck Analysis
+# ============================================================
+#
+# Why is the brute force solution inefficient?
+#
+# Even though the matrix is sorted, the brute force solution
+# completely ignores this information.
+#
+# Example:
+#
+# [
+#   [1, 3, 5, 7],
+#   [10, 11, 16, 20],
+#   [23, 30, 34, 60]
+# ]
+#
+# target = 60
+#
+# We may need to inspect nearly every element before finding
+# the answer.
+#
+# Repeated Work
+# -------------
+# We are checking many values that can be eliminated using
+# ordering information.
+#
+# Since the matrix is globally sorted, searching linearly
+# wastes work.
+#
+# We need a faster searching technique.
+#
+# ============================================================
+# 5. Optimization Journey
+# ============================================================
+#
+# Observation 1
+# -------------
+# Every row is sorted.
+#
+# Observation 2
+# -------------
+# The first element of a row is greater than the last element
+# of the previous row.
+#
+# Example:
+#
+# [
+#   [1,  3,  5,  7],
+#   [10, 11, 16, 20],
+#   [23, 30, 34, 60]
+# ]
+#
+# Notice:
+#
+# 7  < 10
+# 20 < 23
+#
+# This means the entire matrix behaves like one sorted array:
+#
+# [1,3,5,7,10,11,16,20,23,30,34,60]
+#
+# Since the data is globally sorted,
+# Binary Search becomes possible.
+#
+# ------------------------------------------------------------
+# Converting 1D Index to 2D Coordinates
+# ------------------------------------------------------------
+#
+# Suppose:
+#
+# rows = 3
+# cols = 4
+#
+# Flattened indices:
+#
+# Index:
+# 0 1 2 3 4 5 6 7 8 9 10 11
+#
+# Every row contains exactly 'cols' elements.
+#
+# Therefore:
+#
+# row = index / cols
+# col = index % cols
+#
+# Example:
+#
+# index = 6
+#
+# row = 6 / 4 = 1
+# col = 6 % 4 = 2
+#
+# matrix[1][2] = 16
+#
+# Now we can perform Binary Search on the virtual array
+# without actually creating one.
+#
+# ============================================================
+# 6. Dry Run
+# ============================================================
+#
+# matrix =
+#
+# [
+#   [1, 3, 5, 7],
+#   [10, 11, 16, 20],
+#   [23, 30, 34, 60]
+# ]
+#
+# target = 16
+#
+# rows = 3
+# cols = 4
+#
+# left  = 0
+# right = 11
+#
+# ------------------------------------------------------------
+# Iteration 1
+# ------------------------------------------------------------
+#
+# mid = 5
+#
+# row = 5 / 4 = 1
+# col = 5 % 4 = 1
+#
+# value = 11
+#
+# 11 < 16
+#
+# left = 6
+#
+# ------------------------------------------------------------
+# Iteration 2
+# ------------------------------------------------------------
+#
+# left = 6
+# right = 11
+#
+# mid = 8
+#
+# row = 8 / 4 = 2
+# col = 8 % 4 = 0
+#
+# value = 23
+#
+# 23 > 16
+#
+# right = 7
+#
+# ------------------------------------------------------------
+# Iteration 3
+# ------------------------------------------------------------
+#
+# left = 6
+# right = 7
+#
+# mid = 6
+#
+# row = 6 / 4 = 1
+# col = 6 % 4 = 2
+#
+# value = 16
+#
+# Found target.
+#
+# Return true.
+#
+# ============================================================
+# 7. Optimal Solution
+# ============================================================
+#
+# Treat the matrix as a virtual sorted array.
+#
+# Perform Binary Search over indices:
+#
+# 0...(rows * cols - 1)
+#
+# For every midpoint:
+#
+# row = mid / cols
+# col = mid % cols
+#
+# Compare matrix[row][col] with target and shrink the search
+# space exactly as in a normal Binary Search.
+#
+# Time Complexity:
+# O(log(m * n))
+#
+# Space Complexity:
+# O(1)
+#
+# ============================================================
+# 8. Optimal Code
+# ============================================================
 
-def search_matrix(matrix, target)
-  m = matrix.length
-  n = matrix[0].length
-  l = 0
-  r = m * n - 1
+# @param {Integer[][]} matrix
+# @param {Integer} target
+# @return {Boolean}
+def search_matrix?(matrix, target)
+  rows = matrix.length
+  cols = matrix[0].length
 
-  while l <= r
-    mid = (l + r) / 2
-    val = matrix[mid / n][mid % n]   # convert flat index to 2D
+  left = 0
+  right = (rows * cols) - 1
 
-    if val == target
+  while left <= right
+    mid = left + ((right - left) / 2)
+
+    row = mid / cols
+    col = mid % cols
+
+    value = matrix[row][col]
+
+    if value == target
       return true
-    elsif val < target
-      l = mid + 1
+    elsif value < target
+      left = mid + 1
     else
-      r = mid - 1
+      right = mid - 1
     end
   end
 
   false
 end
 
-if __FILE__ == $PROGRAM_NAME
-  mat = [[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]]
-  puts "Brute: #{search_matrix_brute(mat, 3)}"    # true
-  puts "Opt:   #{search_matrix(mat, 3)}"          # true
-  puts "Brute: #{search_matrix_brute(mat, 13)}"   # false
-  puts "Opt:   #{search_matrix(mat, 13)}"         # false
-end
+# ============================================================
+# Example
+# ============================================================
+#
+matrix = [
+  [1, 3, 5, 7],
+  [10, 11, 16, 20],
+  [23, 30, 34, 60]
+]
+
+puts search_matrix?(matrix, 3)
+puts search_matrix?(matrix, 13)
