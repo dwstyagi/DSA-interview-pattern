@@ -36,21 +36,21 @@
 # - Empty tree -> []
 # - Single node -> [[root.val]]
 
-# rubocop:disable Style/Documentation
 class TreeNode
   attr_accessor :val, :left, :right
+
   def initialize(val = 0, left = nil, right = nil)
     @val   = val
     @left  = left
     @right = right
   end
 end
-# rubocop:enable Style/Documentation
 
 def level_order_brute(root)
   levels = {}
   dfs = lambda do |node, depth|
     return unless node
+
     (levels[depth] ||= []) << node.val
     dfs.call(node.left,  depth + 1)
     dfs.call(node.right, depth + 1)
