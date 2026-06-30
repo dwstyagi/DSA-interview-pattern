@@ -111,23 +111,20 @@ end
 
 # 8. Optimal Code
 def flatten(root)
-  current = root
+  prev = nil
 
-  until current.nil?
-    if current.left
-      # The predecessor becomes the tail before the old right subtree.
-      predecessor = current.left
-      predecessor = predecessor.right while predecessor.right
+  dfs = lambda do |node|
+    return if node.nil?
 
-      predecessor.right = current.right
-      current.right = current.left
-      current.left = nil
-    end
+    dfs.call(node.right)
+    dfs.call(node.left)
 
-    current = current.right
+    node.right = prev
+    node.left = nil
+    prev = node
   end
 
-  root
+  dfs.call(root)
 end
 
 def right_chain_values(root)

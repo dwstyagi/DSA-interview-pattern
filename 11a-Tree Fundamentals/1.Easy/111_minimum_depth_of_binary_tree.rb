@@ -144,9 +144,11 @@ def min_depth(root)
   return 0 if root.nil?
   return 1 if root.left.nil? && root.right.nil?
 
+  # If one child is missing, recurse into the other child.
   return 1 + min_depth(root.right) if root.left.nil?
   return 1 + min_depth(root.left) if root.right.nil?
 
+  # If both children exist, take the smaller depth.
   1 + [min_depth(root.left), min_depth(root.right)].min
 end
 

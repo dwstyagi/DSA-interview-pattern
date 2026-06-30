@@ -137,7 +137,9 @@ def valid_with_bounds?(node, low, high)
 end
 
 def valid_bst?(root)
-  valid_with_bounds?(root, nil, nil)
+  low = -Float::INFINITY
+  high = Float::INFINITY
+  valid_with_bounds?(root, low, high)
 end
 
 # -----------------------------------------------------------------------------

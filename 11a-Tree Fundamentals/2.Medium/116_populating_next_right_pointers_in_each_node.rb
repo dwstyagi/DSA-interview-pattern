@@ -139,7 +139,7 @@ def connect(root)
 
   leftmost = root
 
-  while leftmost.left
+  while leftmost.left # While there is a next level
     current = leftmost
 
     while current
